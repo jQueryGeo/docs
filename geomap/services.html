@@ -81,15 +81,29 @@
       <h2>service object</h2>
 
       <p>A service object has six properties, two of which are required. The id and class properties are optional but at least one is recommended so you can target specific services with the toggle and opacity methods.</p>
+
       <h3>id</h3>
       <p>Each service can have an id that distinguishes it from other service objects in the array. The id is a string and must be follow the HTML element id naming conditions. If present, the id must be unique across all services in all maps as well as unique from any other HTML element on the page. The default service object of a geomap widget does not have an id.</p>
+
       <h3>class</h3>
       <p>Each service can have a class as well. The class is a string and must be follow the CSS class naming conditions. You can consider this as the class of images the service will supply and usually name it after the service, such as osm, mass-gis, etc. The default service object of a geomap widget has the class: osm.</p>
       <p>All services also get the class geo-service whether you supply a class to the service object or not. Therefore, the default service is both .osm (as part of its service object) and .geo-service (as added by the widget).</p>
       <p>Unfortunately, class is a reserved word in JavaScript. When you specify class in your service object, you must quote the word class. This is exactly how it's done in jQuery itself when applying attributes to an element based on an object. To quote the jQuery API:</p>
       <blockquote>The name &quot;class&quot; must be quoted since it is a JavaScript reserved word, and &quot;className&quot; cannot be used since it is not the correct attribute name.</blockquote>
       <h3>type</h3>
-      <p>A service object has a type property which is either &quot;tiled&quot; or &quot;shingled&quot;. Tiled servies will get one image request per tile needed to fill a given view when the map refreshes. The tile request's bbox will only be the size of the given tile. Shingled services will get only one image request each time the map refreshes and the bbox will be the extent of the whole map view.</p>
+      <p>A service object has a type property which is either 'tiled', 'shingled', or 'image'.</p>
+
+      <h4>tiled</h4>
+      <p>Tiled servies will get one image request per tile needed to fill a given view when the map refreshes. The tile request's bbox will only be the size of the given tile.</p>
+      
+      <h4>shingled</h4>
+      <p>Shingled services will get one image request each time the map refreshes. The bbox will be the extent of the current map view.</p>
+
+      <h4>image</h4>
+      <p>Image services will make only one request for the image and internally show or hide parts of it as if it were a shingled service. This is good for displaying high resolution images without an image service. The images must be on the same domain from the page on which jQueryGeo runs or you will get a cross-domain security error.</p>
+
+      <p><b>Note</b>: This type forces other geomap settings to match an image's coordinate system. Specifically: <ul><li><a href="tilingScheme.html">tilingScheme</a> will be null</li><li><a href="bboxMax.html">bboxMax</a> will be the size of the image, and</li><li><a href="axisLayout.html">axisLayout</a> will be 'image'</li></ul> This will affect any other services you wish to add as they must be shinged and support an image's axisLayout.</p>
+
       <h3>src</h3>
       <p>The src property of a service object can be one of the following three options:</p>
       <ul>
@@ -97,7 +111,7 @@
         <li>a function that accepts an object specifying information about the current image request which <b>returns a jQuery Promise object</b> and, later, calls either resolve passing a URL to an image or reject to indicate that no image is available</li>
         <li>a template string that the geomap widget can use to build a URL itself</li>
       </ul>
-      <p>For tiled services, the image is placed at the tile location specified. For shingled services, the image will fill the whole map view.</p>
+      <p>For tiled services, the image is placed at the tile location specified. For shingled and image services, the image will fill the whole map view.</p>
       <p>If the browser's request of the image results in a 404 status the map will not show that tile or image.</p>
       <p>When src is a function, the argument to that function has the following properties:</p>
       <table>
