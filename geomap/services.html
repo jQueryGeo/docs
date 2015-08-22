@@ -32,12 +32,12 @@
         </tr>
         <tr>
           <td colspan=2><pre>[ {
-  &quot;class&quot;: &quot;osm&quot;,
-  type: &quot;tiled&quot;,
+  'class': 'osm',
+  type: 'tiled',
   src: function( view ) {
-    return &quot;http://otile&quot; + ((view.index % 4) + 1) + &quot;.mqcdn.com/tiles/1.0.0/osm/&quot; + view.zoom + &quot;/&quot; + view.tile.column + &quot;/&quot; + view.tile.row + &quot;.png&quot;;
+    return 'http://otile' + ((view.index % 4) + 1) + '.mqcdn.com/tiles/1.0.0/osm/' + view.zoom + '/' + view.tile.column + '/' + view.tile.row + '.png';
   },
-  attr: &quot;&lt;p&gt;Tiles Courtesy of &lt;a href='http://www.mapquest.com/' target='_blank'&gt;MapQuest&lt;/a&gt; &lt;img src='http://developer.mapquest.com/content/osm/mq_logo.png'&gt;&lt;/p&gt;&quot;
+  attr: '&lt;p&gt;Tiles Courtesy of &lt;a href=&quot;http://www.mapquest.com/&quot; target=&quot;_blank&quot;&gt;MapQuest&lt;/a&gt; &lt;img src=&quot;http://developer.mapquest.com/content/osm/mq_logo.png&quot;&gt;&lt;/p&gt;';
 } ] );</pre></td>
         </tr>
         <tr>
@@ -45,33 +45,33 @@
         </tr>
         <tr>
           <td colspan=2><pre>$( <i>selector</i> ).geomap( { services: [ {
-  &quot;class&quot;: &quot;osm&quot;,
-  type: &quot;tiled&quot;,
+  'class': 'osm',
+  type: 'tiled',
   src: function( view ) {
-    return &quot;http://tile.openstreetmap.org/&quot; + view.zoom + &quot;/&quot; + view.tile.column + &quot;/&quot; + view.tile.row + &quot;.png&quot;;
+    return 'http://tile.openstreetmap.org/' + view.zoom + '/' + view.tile.column + '/' + view.tile.row + '.png';
   },
-  attr: &quot;&amp;copy; OpenStreetMap &amp;amp; contributors, CC-BY-SA&quot;,
+  attr: '&amp;copy; OpenStreetMap &amp;amp; contributors, CC-BY-SA',
   style: {
-    visibility: &quot;visible&quot;,
+    visibility: 'visible',
     opacity: 1.0
   }
 } ] } );</pre></td>
         </tr>
         <tr>
           <th>get</th>
-          <td><pre>var services = $( <i>selector</i> ).geomap( &quot;option&quot;, &quot;services&quot; );</pre></td>
+          <td><pre>var services = $( <i>selector</i> ).geomap( 'option', 'services' );</pre></td>
         </tr>
         <tr>
           <th>set</th>
         </tr>
         <tr>
-          <td colspan=2><pre>$( <i>selector</i> ).geomap( &quot;option&quot;, &quot;services&quot;, [ {
-  id: &quot;openstreetmap&quot;,
-  type: &quot;tiled&quot;,
+          <td colspan=2><pre>$( <i>selector</i> ).geomap( 'option', 'services', [ {
+  id: 'openstreetmap',
+  type: 'tiled',
   src: function( view ) {
-    return &quot;http://tile.openstreetmap.org/&quot; + view.zoom + &quot;/&quot; + view.tile.column + &quot;/&quot; + view.tile.row + &quot;.png&quot;;
+    return 'http://tile.openstreetmap.org/' + view.zoom + '/' + view.tile.column + '/' + view.tile.row + '.png';
   },
-  attr: &quot;&amp;copy; OpenStreetMap &amp;amp; contributors, CC-BY-SA&quot;
+  attr: '&amp;copy; OpenStreetMap &amp;amp; contributors, CC-BY-SA'
 } ]</pre></td>
         </tr>
       </table>
