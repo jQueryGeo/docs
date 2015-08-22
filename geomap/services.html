@@ -149,7 +149,7 @@ $( <i>selector</i> ).geomap( { services: [ {
       <h4 id="type-image">image</h4>
       <p>Image services will make only one request for the image and let a user pan and zoom as if it were a shingled service. This is good for displaying high resolution images without an image service. The images must be from the same domain as the page on which jQueryGeo runs or you will get a cross-domain security error (unless the other web server gives you access via CORS).</p>
 
-      <p><b>Note</b>: This type forces other geomap settings to match an image's coordinate system. Specifically: <ul><li><a href="tilingScheme.html">tilingScheme</a> will be null</li><li><a href="bboxMax.html">bboxMax</a> will be the size of the image, and</li><li><a href="axisLayout.html">axisLayout</a> will be 'image'</li></ul> This will affect any other services you wish to add as they must be shinged and support an image's axisLayout.</p>
+      <p><b>Note</b>: This type forces other geomap settings to match an image's coordinate system. Specifically: <ul><li><a href="../geo/proj.html">$.geo.proj</a> will be null</li><li><a href="tilingScheme.html">tilingScheme</a> will be null</li><li><a href="bboxMax.html">bboxMax</a> will be the size of the image, and</li><li><a href="axisLayout.html">axisLayout</a> will be 'image'</li></ul> This will affect any other services you wish to add as they must be shinged and support an image's axisLayout.</p>
 
       <h3>src</h3>
       <p>The src property of a service object can be one of the following three options:</p>
