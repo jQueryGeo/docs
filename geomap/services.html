@@ -37,25 +37,72 @@
   src: function( view ) {
     return 'http://otile' + ((view.index % 4) + 1) + '.mqcdn.com/tiles/1.0.0/osm/' + view.zoom + '/' + view.tile.column + '/' + view.tile.row + '.png';
   },
-  attr: '&lt;p&gt;Tiles Courtesy of &lt;a href=&quot;http://www.mapquest.com/&quot; target=&quot;_blank&quot;&gt;MapQuest&lt;/a&gt; &lt;img src=&quot;http://developer.mapquest.com/content/osm/mq_logo.png&quot;&gt;&lt;/p&gt;';
+  style: {
+    visibility: 'visible',
+    opacity: 1.0
+  },
+  attr: '&lt;p&gt;Tiles Courtesy of &lt;a href=&quot;http://www.mapquest.com/&quot; target=&quot;_blank&quot;&gt;MapQuest&lt;/a&gt; &lt;img src=&quot;http://developer.mapquest.com/content/osm/mq_logo.png&quot;&gt;&lt;/p&gt;'
 } ] );</pre></td>
         </tr>
         <tr>
           <th>init</th>
         </tr>
         <tr>
-          <td colspan=2><pre>$( <i>selector</i> ).geomap( { services: [ {
-  'class': 'osm',
+          <td colspan="2">
+            <p>One tiled service with Open Street Map:</p>
+            <pre>$( <i>selector</i> ).geomap( { services: [ {
   type: 'tiled',
   src: function( view ) {
     return 'http://tile.openstreetmap.org/' + view.zoom + '/' + view.tile.column + '/' + view.tile.row + '.png';
   },
-  attr: '&amp;copy; OpenStreetMap &amp;amp; contributors, CC-BY-SA',
-  style: {
-    visibility: 'visible',
-    opacity: 1.0
-  }
-} ] } );</pre></td>
+  attr: '&amp;copy; OpenStreetMap &amp;amp; contributors, CC-BY-SA'
+} ] } );</pre>
+          
+            <p>Same service but using a template string:</p>
+            <pre>$( <i>selector</i> ).geomap( { services: [ {
+  type: 'tiled',
+  src: 'http://tile.openstreetmap.org/{{:zoom}}/{{:tile.column}}/{{:tile.row}}.png',
+  attr: '&amp;copy; OpenStreetMap &amp;amp; contributors, CC-BY-SA'
+} ] } );</pre>
+          
+            <p>Tiled service with an empty shingled service for graphics, e.g., points of interest:</p>
+            <pre>$( <i>selector</i> ).geomap( { services: [ {
+  type: 'tiled',
+  src: 'http://tile.openstreetmap.org/{{:zoom}}/{{:tile.column}}/{{:tile.row}}.png',
+  attr: '&amp;copy; OpenStreetMap &amp;amp; contributors, CC-BY-SA'
+}, {
+  id: 'some-pois',
+  type: 'shingled'
+}] } );</pre>
+          
+            <p>Shingled WMS service (MassGIS):</p>
+            <p>Your service may require changes to $.geo.proj, tilingScheme, and bboxMax. See the <a href="/#component-examples">shingled services</a> example to see this in action.</p>
+            <pre>var massGisHost = 'http://giswebservices.massgis.state.ma.us/geoserver/wms';
+var imageTemplate = '&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetMap&amp;FORMAT=image/png&amp;SRS=EPSG:26986&amp;BBOX={{:bbox}}&amp;WIDTH={{:width}}&amp;HEIGHT={{:height}}';
+
+$( <i>selector</i> ).geomap( { services: [ {
+  type: 'shingled',
+  src: massGisHost + "?LAYERS=massgis_basemap" + imageTemplate,
+  attr: '&amp;copy; 2011 Commonwealth of Massachusetts'
+} ] } );</pre>
+          
+            <p>A single large image as a virtual shingled service:</p>
+            <p>Automatically sets other geomap options. See the <a href="#type-image">image service type</a> section for details.</p>
+            <pre>$( <i>selector</i> ).geomap( { services: [ {
+  type: 'image',
+  src: '/collection_234_hd.jpg'
+} ] } );</pre>
+          
+            <p>A large image with an empty shingled service for graphics, e.g., annotations:</p>
+            <pre>$( <i>selector</i> ).geomap( { services: [ {
+  type: 'image',
+  src: '/collection_234_hd.jpg'
+}, {
+  id: 'annotations',
+  type: 'shingled'
+} ] } );</pre>
+          
+          </td>
         </tr>
         <tr>
           <th>get</th>
@@ -93,14 +140,14 @@
       <h3>type</h3>
       <p>A service object has a type property which is either 'tiled', 'shingled', or 'image'.</p>
 
-      <h4>tiled</h4>
+      <h4 id="type-tiled">tiled</h4>
       <p>Tiled servies will get one image request per tile needed to fill a given view when the map refreshes. The tile request's bbox will only be the size of the given tile.</p>
       
-      <h4>shingled</h4>
+      <h4 id="type-shingled">shingled</h4>
       <p>Shingled services will get one image request each time the map refreshes. The bbox will be the extent of the current map view.</p>
 
-      <h4>image</h4>
-      <p>Image services will make only one request for the image and internally show or hide parts of it as if it were a shingled service. This is good for displaying high resolution images without an image service. The images must be on the same domain from the page on which jQueryGeo runs or you will get a cross-domain security error.</p>
+      <h4 id="type-image">image</h4>
+      <p>Image services will make only one request for the image and let a user pan and zoom as if it were a shingled service. This is good for displaying high resolution images without an image service. The images must be from the same domain as the page on which jQueryGeo runs or you will get a cross-domain security error (unless the other web server gives you access via CORS).</p>
 
       <p><b>Note</b>: This type forces other geomap settings to match an image's coordinate system. Specifically: <ul><li><a href="tilingScheme.html">tilingScheme</a> will be null</li><li><a href="bboxMax.html">bboxMax</a> will be the size of the image, and</li><li><a href="axisLayout.html">axisLayout</a> will be 'image'</li></ul> This will affect any other services you wish to add as they must be shinged and support an image's axisLayout.</p>
 
@@ -110,6 +157,7 @@
         <li>a function that accepts an object specifying information about the current image request which <b>returns a URL to an image</b> or null to indicate that no image is available or required</li>
         <li>a function that accepts an object specifying information about the current image request which <b>returns a jQuery Promise object</b> and, later, calls either resolve passing a URL to an image or reject to indicate that no image is available</li>
         <li>a template string that the geomap widget can use to build a URL itself</li>
+        <li>null or missing, e.g., for adding an empty service on which to append graphics</li>
       </ul>
       <p>For tiled services, the image is placed at the tile location specified. For shingled and image services, the image will fill the whole map view.</p>
       <p>If the browser's request of the image results in a 404 status the map will not show that tile or image.</p>
