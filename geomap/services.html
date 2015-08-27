@@ -221,6 +221,11 @@ var imageCanvas = $( '#image-canvas' ).geomap( {
 
       <p>The opacity defaults to 1.0. It determines how transparent a service is when it is visible. Valid values are floating point numbers between 0 and 1 inclusive. Services with an opacity of 0 will not show on the map even if visible is true. You can change the opacity of a service either by changing the opacity property of the service object and then setting geomap's services option or by using the opacity method of the geomap widget. The latter is recommended because it is a lot faster and does not cause services to be recreated.</p>
 
+      <h2>service-specific options</h2>
+
+      <p>Some services (currently, shingled only) have extra, service-specific options.</p>
+
+
       <h2>modifying services</h2>
 
       <p>By default, the geomap widget starts with one service object in the services array. The default service object will display OpenStreetMap data via <a href="http://open.mapquest.com/" rel="external" target="_blank">mapquest open</a> tiles. Setting the services option will replace all existing services with a new set that you specify. You can set a specific part of of a specific service by getting the current array, modifying, adding, or deleting one of the service objects and then re-setting the services option with the modified array.</p>
