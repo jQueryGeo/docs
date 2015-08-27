@@ -147,9 +147,20 @@ $( <i>selector</i> ).geomap( { services: [ {
       <p>Shingled services will get one image request each time the map refreshes. The bbox will be the extent of the current map view.</p>
 
       <h4 id="type-image">image</h4>
-      <p>Image services will make only one request for the image and let a user pan and zoom as if it were a shingled service. This is good for displaying high resolution images without an image service. The images must be from the same domain as the page on which jQueryGeo runs or you will get a cross-domain security error (unless the other web server gives you access via CORS).</p>
+      <p>Image services will make only one request for the image and let a user pan and zoom as if it were a shingled service. This is good for displaying high resolution images without an actual, server-side image service. The images must be from the same domain as the page on which jQueryGeo runs or you will get a cross-domain security error (unless the other web server gives you access via CORS).</p>
 
-      <p><b>Note</b>: This type forces other geomap settings to match an image's coordinate system. Specifically: <ul><li><a href="../geo/proj.html">$.geo.proj</a> will be null</li><li><a href="tilingScheme.html">tilingScheme</a> will be null</li><li><a href="bboxMax.html">bboxMax</a> will be the size of the image, and</li><li><a href="axisLayout.html">axisLayout</a> will be 'image'</li></ul> This will affect any other services you wish to add as they must be shinged and support an image's axisLayout.</p>
+      <p><b>Note</b>: This type forces other geomap settings to match an image's coordinate system. Specifically: <ul><li><a href="tilingScheme.html">tilingScheme</a> will be null</li><li><a href="bboxMax.html">bboxMax</a> will be the size of the image, and</li><li><a href="axisLayout.html">axisLayout</a> will be 'image'</li></ul> This will affect any other services you wish to add as they must be shinged and support an image's axisLayout.</p>
+
+      <p><b>Also note</b>: <a href="../geo/proj.html">$.geo.proj</a> must be set to null but that it currently outside the bounds of the geomap widget and a service object. You should set it to null before initializing a map with an image service.</p>
+
+      <pre><code>$.geo.proj = null;
+
+var imageCanvas = $( '#image-canvas' ).geomap( {
+  services: [ {
+    type: 'image',
+    src: 'big-image.jpg'
+  } ]
+} );</code></pre>
 
       <h3>src</h3>
       <p>The src property of a service object can be one of the following three options:</p>
