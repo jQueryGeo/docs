@@ -87,6 +87,7 @@ $( <i>selector</i> ).geomap( { services: [ {
   attr: '&amp;copy; 2011 Commonwealth of Massachusetts'
 } ] } );</pre>
           
+            <!--
             <p>A single large image as a virtual shingled service:</p>
             <p>Automatically sets other geomap options. See the <a href="#type-image">image service type</a> section for details.</p>
             <pre>$.geo.proj = null;
@@ -106,6 +107,7 @@ $( <i>selector</i> ).geomap( { services: [ {
   id: 'annotations',
   type: 'shingled'
 } ] } );</pre>
+            -->
           
           </td>
         </tr>
@@ -139,7 +141,7 @@ $( <i>selector</i> ).geomap( { services: [ {
       <p>Some service types have service-specific properties to further configure how they operate.</p>
 
       <h3>type</h3>
-      <p>A service object has a type property which is either 'tiled', 'shingled', or 'image'.</p>
+      <p>A service object has a type property which is either 'tiled' or 'shingled'. <!--, or 'image'.--></p>
 
       <h4 id="type-tiled">tiled</h4>
       <p>Tiled servies will get one image request per tile needed to fill a given view when the map refreshes. The tile request's bbox will only be the size of the given tile.</p>
@@ -151,6 +153,7 @@ $( <i>selector</i> ).geomap( { services: [ {
 
       <p>When panning, a shingled service will keep old images around and layer new images on top. This creates a shingling effect and, when previously viewed areas are panned back into view, the user will see the old images while waiting for the latest one to load.</p>
 
+      <!--
       <h4 id="type-image">image</h4>
       <p>Image services will make only one request for the image and let a user pan and zoom as if it were a shingled service. This is good for displaying high resolution images without an actual, server-side image service. The images must be from the same domain as the page on which jQueryGeo runs or you will get a cross-domain security error (unless the other web server gives you access via CORS).</p>
 
@@ -166,6 +169,7 @@ var imageCanvas = $( '#image-canvas' ).geomap( {
     src: 'big-image.jpg'
   } ]
 } );</code></pre>
+      -->
 
       <h3>id</h3>
       <p>Each service can have an id that distinguishes it from other service objects in the array. The id is a string and must be follow the HTML element id naming conditions. If present, the id must be unique across all services in all maps as well as unique from any other HTML element on the page. The default service object of a geomap widget does not have an id.</p>
@@ -177,7 +181,7 @@ var imageCanvas = $( '#image-canvas' ).geomap( {
       <blockquote>The name &quot;class&quot; must be quoted since it is a JavaScript reserved word, and &quot;className&quot; cannot be used since it is not the correct attribute name.</blockquote>
 
       <h3>src</h3>
-      <p>The src property of a service object can be one of the following three options:</p>
+      <p>The src property of a service object can be one of the following options:</p>
       <ul>
         <li>a function that accepts an object specifying information about the current image request which <b>returns a URL to an image</b> or null to indicate that no image is available or required</li>
         <li>a function that accepts an object specifying information about the current image request which <b>returns a jQuery Promise object</b> and, later, calls either resolve passing a URL to an image or reject to indicate that no image is available</li>
