@@ -32,9 +32,11 @@
           <td><pre>{
   borderRadius: &quot;8px&quot;,
   color: &quot;#7f0000&quot;,
+  fill: undefined,
   fillOpacity: .2,
   height: &quot;8px&quot;,
   opacity: 1,
+  stroke: undefined,
   strokeOpacity: 1,
   strokeWidth: &quot;2px&quot;,
   visibility: &quot;visible&quot;,
@@ -55,9 +57,38 @@
           <td><pre>$( <i>map selector</i> ).geomap( &quot;option&quot;, &quot;drawStyle&quot;, { strokeWidth: &quot;4px&quot; } );</pre></td>
         </tr>
       </table>
-      <p>The drawStyle option retrieves or updates the style of incomplete lines and polygons <b>as they are being drawn</b>. This differs from the shapeStyle option which updates the style of shapes that you've appended to the map.</p>
+
+      <p>The drawStyle option retrieves or updates the style of incomplete lines and polygons <b>as they are being drawn</b>. This differs from the <a href="shapeStyle.html">shapeStyle</a> option which updates the <i>base</i> style of shapes that you append to the map.</p>
+
+      <p>Two extra color properties, stroke and fill, are not defined by default and use the value of the color property until they are defined individually.</p>
+
       <p>This option affects both the draw modes (drawPoint, drawLineString, and drawPolygon) and the measure modes (measureLength, and measureArea).</p>
+
       <p>This option changes specific properties of the internal style object. If you init or set an incomplete style object, only the style properties you reference are updated.</p>
+
+      <ol>
+        <li>
+          <span>the base shapeStyle starts with its initial style having a red color (applied to both stroke and fill) and a strokeWidth of 2px</span>
+          <pre>var map = $( '#map' ).geomap( );
+map.geomap( 'option', 'shapeStyle' );
+  // {
+  //   color: "#7f0000"
+  //   ...
+  //   strokeWidth: "2px"
+  // }</pre>
+        </li>
+
+        <li>
+          <span>you can change the base drawStyle's stroke color to blue</span>
+          <pre>$( '#map' ).geomap( 'option', 'drawStyle', { stroke: '#00f' } );</pre>
+        </li>
+
+        <li>
+          <span>the next time a user draws a shape or measures, the stroke and fill of the draw shape following the pointer will be blue.</span>
+        </li>
+      </ol>
+      
+
       <p>Please see the style section at the bottom of the <a href="../geomap/index.html#geomap-style">geomap widget</a> page for more information about the style object.</p>
     </div>
   </div> <!-- end of #container -->
