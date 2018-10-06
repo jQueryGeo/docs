@@ -1,0 +1,52 @@
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>buffer | $.geo</title>
+  <meta name="description" content="jQuery Geo buffer method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="buffer" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>buffer</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Object ( <a href="http://geojson.org/geojson-spec.html#polygon" rel="external">GeoJSON Polygon</a> )</td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.buffer( Object point ( <a href="http://geojson.org/geojson-spec.html#point" rel="external">GeoJSON Point</a> ), Number distance )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var circle = $.geo.buffer( point, 20 )</pre></td>
+        </tr>
+      </table>
+      <p>The buffer method creates a new shape by applying a buffer around an existing shape.</p>
+      <p>The distance argument is in non-geodetic map units. If you are using geomap with its default map service, it is in meters because the default projection is web mercator meters. If, for example, you are working in a different projection such as NAD83 / New Jersey feet, this function will buffer the shape by feet.</p>
+      <p><b>Currently, jQuery Geo will only buffer Point objects into circle Polygons.</b></p> <!--p>The distance and dy arguments can be positive, negative or zero and will modify the width or height of the bbox accordingly.</p-->
+      <p>This function is similar to Geometry.buffer in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
