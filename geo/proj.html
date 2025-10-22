@@ -4,6 +4,864 @@
 <head>
   <meta charset="utf-8">
 
+  <title>area | $.geo</title>
+  <meta name="description" content="jQuery Geo area method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="area" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>area</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Number</td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.area( Object shape ( <a href="http://geojson.org/geojson-spec.html" rel="external">GeoJSON object</a> ) )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var area = $.geo.area( {
+      type: &quot;Polygon&quot;,
+      coordinates: [[
+        [-75, 39.7],
+        [-74.8, 39.3],
+        [-75.2, 39.3],
+        [-75, 39.7]
+      ]]
+} )</pre></td>
+        </tr>
+      </table>
+      <p>The area method calculates the area of a basic GeoJSON geometry object and returns it in non-geodetic units. The basic shapes are Point, LineString and Polygon. If you are using geomap with its default map service, the area is in square meters because the default projection is web mercator meters.</p>
+      <p>While you can pass any basic geometry, this function returns the area of Polygon objects and 0 for objects of other shape types.</p>
+      <p>If the argument is not a basic GeoJSON geometry object, this function returns undefined.</p>
+      <p>This function is similar to Geometry.getArea in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>bbox | $.geo</title>
+  <meta name="description" content="jQuery Geo bbox method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="bbox" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>bbox</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Array ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> )</td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.bbox( Object shape ( <a href="http://geojson.org/geojson-spec.html" rel="external">GeoJSON object</a> ) )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var bbox = $.geo.bbox( {
+  type: &quot;LineString&quot;, coordinates: [
+    [ -71, 40 ], [ -70.5, 41 ]
+  ]
+} )</pre></td>
+        </tr>
+      </table>
+      <p>The bbox method calculates the smallest box that will contain all the positions in the passed-in shape. The shape can be any GeoJSON geometry object from Point to GeometryCollection.</p>
+      <p>The GeoJSON spec allows for each geometry type to have a bbox property. The $.geo.bbox method will honor that property and assume it is accurate. It will return the value of that property before attempting to calculate the bbox itself. If you wish to force $.geo.bbox to calculate the bbox, you will have to manually delete the bbox property from the geometry object.</p>
+      <pre>var shape = {
+  type: &quot;LineString&quot;, coordinates: [
+    [ -71, 40 ], [ -70.5, 41 ]
+  ],
+  bbox: [ -71, 40, -70.5, 41 ]
+};
+var bboxFromProperty = $.geo.bbox(shape);
+delete shape.bbox;
+var calculatedBbox = $.geo.bbox(shape);
+</pre>
+      <p>If the argument is not a basic GeoJSON geometry object, this function returns undefined.</p>
+      <!--<p>Due to the liberties taken by web mercator to display a round Earth on a single 
+        flat plane, when working in geodetic (lon/lat) coordinates, the result of the 
+        $.geo.bbox function may not be exactly what you expect based on your input 
+        geodetic geometry.</p>-->
+      <p>This function is similar to Geometry.getEnvelope in JTS.</p>
+     </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>buffer | $.geo</title>
+  <meta name="description" content="jQuery Geo buffer method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="buffer" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>buffer</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Object ( <a href="http://geojson.org/geojson-spec.html#polygon" rel="external">GeoJSON Polygon</a> )</td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.buffer( Object point ( <a href="http://geojson.org/geojson-spec.html#point" rel="external">GeoJSON Point</a> ), Number distance )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var circle = $.geo.buffer( point, 20 )</pre></td>
+        </tr>
+      </table>
+      <p>The buffer method creates a new shape by applying a buffer around an existing shape.</p>
+      <p>The distance argument is in non-geodetic map units. If you are using geomap with its default map service, it is in meters because the default projection is web mercator meters. If, for example, you are working in a different projection such as NAD83 / New Jersey feet, this function will buffer the shape by feet.</p>
+      <p><b>Currently, jQuery Geo will only buffer Point objects into circle Polygons.</b></p> <!--p>The distance and dy arguments can be positive, negative or zero and will modify the width or height of the bbox accordingly.</p-->
+      <p>This function is similar to Geometry.buffer in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>center | $.geo</title>
+  <meta name="description" content="jQuery Geo center method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="center" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>center</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Array ( <a href="http://geojson.org/geojson-spec.html#positions" rel="external">GeoJSON position</a> ) </td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.center( Array bbox ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> ) )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var bboxCenter = $.geo.center( bbox )</pre></td>
+        </tr>
+      </table>
+      <p>The center method calculates the center of a bbox and returns it as a GeoJSON position.</p>
+      <p>It operates on bounding boxes and should not be confused with the centroid function, which operates on GeoJSON geometry objects.</p>
+      <p>This function is called Envelope.centre in JTS (I assume because JTS is built in British Columbia).</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>centroid | $.geo</title>
+  <meta name="description" content="jQuery Geo centroid method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="centroid" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>centroid</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Object ( <a href="http://geojson.org/geojson-spec.html#point" rel="external">GeoJSON Point</a> )</td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.centroid( Object shape ( <a href="http://geojson.org/geojson-spec.html" rel="external">GeoJSON object</a> ) )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var centroid = $.geo.centroid( {
+      type: &quot;Polygon&quot;,
+      coordinates: [[
+        [-75, 39.7],
+        [-74.8, 39.3],
+        [-75.2, 39.3],
+        [-75, 39.7]
+      ]]
+} )</pre></td>
+        </tr>
+      </table>
+      <p>The centroid method calculates the <b>center of mass</b> for the passed-in basic GeoJSON geometry object. The basic geometry types are Point, LineString and Polygon.</p>
+      <p>Technically, only Polygons can be considered to have mass. However, a centroid can be calculated for other geometry types. This method operates on LineStrings as if they were closed polygons and the centroid will likely not lie along the line. The centroid of a Point is a clone of the Point.</p>
+      <!--<p>With GeometryCollections containing multiple geometry types, the centroid of the geometries of highest dimension will be returned. In other words, one Polygon will override any number of LineStrings in the collection and the centroid will simply be the centroid of that Polygon.</p>-->
+      <p>If the argument is not a basic GeoJSON geometry object, this function returns undefined.</p>
+      <p>This function is similar to Geometry.getCentroid in JTS.</p>
+     </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>contains | $.geo</title>
+  <meta name="description" content="jQuery Geo contains method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="contains" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>contains</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Boolean</td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.contains( Object shape1 ( <a href="http://geojson.org/geojson-spec.html" rel="external">GeoJSON object</a> ), Object shape2 ( <a href="http://geojson.org/geojson-spec.html" rel="external">GeoJSON object</a> ) )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var contains = $.geo.contains(
+  {
+    type: "Polygon", coordinates: [[
+      [-71.06, 42.3425],
+      [-71.06, 42.3475],
+      [-71.04, 42.3475],
+      [-71.04, 42.3425],
+      [-71.06, 42.3425]
+    ]]
+  },
+  { type: &quot;Point&quot;, &quot;coordinates&quot;: [ -71, 40 ] }
+)</pre></td>
+        </tr>
+      </table>
+      <p>The contains method determines if the first basic GeoJSON geometry completely contains a second one. The basic shapes are Point, LineString and Polygon however Point and LineString geometries cannot contain other geometries so the only situation that has a possibility of returning true is when the first argument is a Polygon.</p>
+      <p>If either argument is not a basic GeoJSON geometry object, this function returns undefined.</p>
+      <p>This function is similar to Geometry.contains in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>distance | $.geo</title>
+  <meta name="description" content="jQuery Geo distance method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="distance" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>distance</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Number</td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.distance( Object shape1 ( <a href="http://geojson.org/geojson-spec.html" rel="external">GeoJSON object</a> ), Object shape2 ( <a href="http://geojson.org/geojson-spec.html" rel="external">GeoJSON object</a> ) )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var distanceBetween = $.geo.distance(
+  { type: &quot;Point&quot;, &quot;coordinates&quot;: [ -71, 40 ] },
+  { type: &quot;Point&quot;, &quot;coordinates&quot;: [ -70.5, 41 ] }
+)</pre></td>
+        </tr>
+      </table>
+      <p>The distance method calculates the distance between two basic GeoJSON geometry objects and returns it in non-geodetic units. The basic shapes are Point, LineString and Polygon. If you are using geomap with its default map service, the distance is in meters because the default projection is web mercator meters.</p>
+      <p>If either argument is not a basic GeoJSON geometry object, this function returns undefined.</p>
+      <p>This function is similar to Geometry.distance in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>expandBy | $.geo</title>
+  <meta name="description" content="jQuery Geo expandBy method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="expandBy" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>expandBy</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Array ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> ) </td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.expandBy( Array bbox ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> ), Number dx, Number dy )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var largerBbox = $.geo.expandBy( bbox, 20, 20 )</pre></td>
+        </tr>
+      </table>
+      <p>The expandBy method creates a new bbox with the same center as the original but having a width and height that is modified by the dx and dy arguments respectively.</p>
+      <p>The dx and dy arguments are non-geodetic map units. If you are using geomap with its default map service, these are in meters because the default projection is web mercator meters. If, for example, you are working in a different projection such as NAD83 / New Jersey feet, this function will expand or contract the bbox by feet.</p>
+      <p>The dx and dy arguments can be positive, negative or zero and will modify the width or height of the bbox accordingly.</p>
+      <p>This function is similar to Envelope.expandBy in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>height | $.geo</title>
+  <meta name="description" content="jQuery Geo height method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="height" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>height</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Number</td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.height( Array bbox ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var height = $.geo.height( [ -71.1, 42.3, -71.0, 42.4 ] )</pre></td>
+        </tr>
+      </table>
+      <p>The height method returns the true height of a bbox in non-geodetic map units. If you are using geomap with its default map service, the height is in meters because the default projection is web mercator meters.</p>
+      <p>This function is similar to Envelope.getHeight in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>include | $.geo</title>
+  <meta name="description" content="jQuery Geo include method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="include" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>include</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Array ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> ) </td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.include( null | Array bbox ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> ),  Array position ( <a href="http://geojson.org/geojson-spec.html#positions" rel="external">GeoJSON position</a> ) | Array bbox ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> )  )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var bboxOfCoord = $.geo.include( null, [ -70, 42 ] );
+var sameAsSecondArgument = $.geo.include( null, [ -71, 41, -69, 43 ] );
+var includeCoord = $.geo.include( bbox, [ -70, 42 ] );
+var includeBbox = $.geo.include( bbox, [ -71, 41, -69, 43 ] );</pre></td>
+        </tr>
+      </table>
+
+      <p>The include method expands a bbox to include either a coordinate or another bbox. The expanded bbox is returned.</p>
+
+      <p>If the first argument is null or undefined, the result is a new bbox and will contain the second argument.</p>
+
+      <p>For efficency, if the first argument is a valid bbox, it is modified in-place and a reference is returned.</p>
+
+      <p>If the second argument is not a coordinate or bbox, this function returns the first argument.</p>
+
+      <p>This function is similar to Envelope.expandToInclude in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>geo namespace | $.geo</title>
+  <meta name="description" content="$.geo namespace">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="geo" class="container">
+    <div data-role="header" data-theme="d">
+      <h1>geometry functions &amp; more!</h1>
+    </div>
+    
+    <div data-role="content">
+      <p>Apart from the geomap widget, jQuery Geo comes bundled with functions to perform various operations on bounding boxes (a.k.a, bbox, the rectangle surrounding any geometry) and the geometries themselves. These functions (and two objects: <a href="#wkt">WKT</a> &amp; <a href="#proj">proj</a>) are all contained in the $.geo namespace.</p>
+
+      <h2>geometry operations</h2>
+      <p>Geometry isn't much fun if you can't do anything with it. These functions help you analyze and manipulate bounding boxes and GeoJSON geometry objects. You call them directly from the $.geo namespace, e.g.,:</p>
+
+      <pre>$.geo.distance( point1, point2 )</pre>
+
+      <p>Except for a few name changes and switching from an object-oriented API to a function-based one, jQuery Geo attempts to follow the names and behavior of the <a href="http://www.vividsolutions.com/jts/jtshome.htm">Java Topology Suite</a> (JTS), which is the de-facto standard for geometry library APIs. JTS itself is an implementation of the <a href="http://www.opengis.org/techno/specs.htm">OGC Simple Features</a> specification but has made design decisions that improve the API for developers. The most notable of which is having Envelope (called bbox in jQuery Geo and GeoJSON) be its own class type.</p>
+      <h3>bbox functions</h3>
+      <p>These functions operate on <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> array, i.e., a JavaScript array having four values:</p>
+      <ul>
+        <li>minimum x/longitude</li>
+        <li>minimum y/latitude</li>
+        <li>maximum x/longitude</li>
+        <li>maximum y/latitude</li>
+      </ul>
+
+      <div class="list-group">
+        <a class="list-group-item" href="center.html">center</a>
+        <a class="list-group-item" href="height.html">height</a>
+        <a class="list-group-item" href="width.html">width</a>
+        <a class="list-group-item" href="expandBy.html">expandBy</a>
+        <a class="list-group-item" href="scaleBy.html">scaleBy</a>
+        <a class="list-group-item" href="include.html">include</a>
+        <a class="list-group-item" href="reaspect.html">reaspect</a>
+        <a class="list-group-item" href="recenter.html">recenter</a>
+        <a class="list-group-item" href="polygonize.html">polygonize</a>
+      </div>
+      <h3>geometry object functions</h3>
+
+      <p>These functions operate on <a href="http://geojson.org/geojson-spec.html" rel="external">GeoJSON geometry objects</a>: Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, and GeometryCollection. They do not operate on Feature or FeatureCollection objects, you have to call these functions on the geometry properties of Feature objects.</p>
+
+      <p>The geometry functions allow you to analyze relationships between geometries such as their distance apart as well as obtain information about them such as bounding box and center point, called the centroid. This section will eventually expand to cover all of the important spatial operations available in the <a href="http://www.vividsolutions.com/jts/jtshome.htm">Java Topology Suite</a>.</p>
+
+      <div class="list-group">
+        <a class="list-group-item" href="bbox.html">bbox</a>
+        <a class="list-group-item" href="distance.html">distance</a>
+        <a class="list-group-item" href="length.html">length</a>
+        <a class="list-group-item" href="area.html">area</a>
+        <a class="list-group-item" href="contains.html">contains</a>
+        <a class="list-group-item" href="centroid.html">centroid</a>
+        <a class="list-group-item" href="pointAlong.html">pointAlong</a>
+        <a class="list-group-item" href="buffer.html">buffer</a>
+      </div>
+
+      <h2>WKT &amp; proj objects</h2>
+
+      <p>These two objects are also on the $.geo namespace. $.geo.WKT is a static object to convert between GeoJSON formatted JavaScript objects and well-known text. $.geo.proj is an instance of a Projection that, by default, can convert between geodetic coordinates (longitude, latitude) and web mercator which is an X/Y coordinate system commonly used on the web.</p>
+
+      <p><b>Please note</b> the difference in case between the two objects on the $.geo namespace. $.geo.WKT is all upper-case because it is static and patterened after the HTML5 global object named JSON, while $.geo.proj can be modified and is closer in concept to an instance property of an Object type, e.g., how the jQuery $.callbacks object is an instance of the Callbacks type.</p>
+
+      <h3 id="wkt">well-known text</h3>
+
+      <p>While jQuery Geo uses JavaScript objects based on the GeoJSON spec, there are two commonly used formats to actually display those geometry objects as text: <a href="http://geojson.org/geojson-spec.html" rel="external">GeoJSON</a> (i.e., the notation itself) and <a href="http://en.wikipedia.org/wiki/Well-known_text" rel="external">well-known text</a> (WKT). The native JSON object helps you convert between JavaScript objects and GeoJSON. Our $.geo.WKT object helps you convert between JavaScript objects and WKT.</p>
+
+      <div class="list-group">
+        <a class="list-group-item" href="wkt.html">$.geo.WKT</a>
+      </div>
+
+      <h3 id="proj">projection</h3>
+
+      <p>The $.geo namespace has a property named proj which is a JavaScript object having four functions: fromGeodetic, fromGeodeticPos, toGeodetic, and toGeodeticPos. These four functions allow all $.geo static bbox/geometry functions, geomap widget properties, geomap widget events &amp; geomap widget methods (collectively referred to as plugin functions from now on) to work in geodetic (lon, lat) coordinates.</p>
+
+      <div class="list-group">
+        <a class="list-group-item" href="proj.html">$.geo.proj</a>
+      </div>
+    </div> <!-- end of content -->
+  </div> <!-- end of page -->
+
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>length | $.geo</title>
+  <meta name="description" content="jQuery Geo length method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="length" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>length</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Number</td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.length( Object shape ( <a href="http://geojson.org/geojson-spec.html" rel="external">GeoJSON object</a> ) )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var length = $.geo.length( {
+      type: &quot;LineString&quot;,
+      coordinates: [[
+        [-75, 39.7],
+        [-74.8, 39.3],
+        [-75.2, 39.3]
+      ]]
+} )</pre></td>
+        </tr>
+      </table>
+      <p>The length method calculates the length of a basic GeoJSON geometry object and returns it in non-geodetic units. The basic shapes are Point, LineString and Polygon. If you are using geomap with its default map service, the length is in meters because the default projection is web mercator meters.</p>
+      <p>This function returns 0 for Point objects, the length of LineString objects and the perimeter of Polygon objects.</p>
+      <p>If the argument is not a basic GeoJSON geometry object, this function returns undefined.</p>
+      <p>This function is similar to Geometry.getLength in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>pointAlong | $.geo</title>
+  <meta name="description" content="jQuery Geo pointAlong method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="pointAlong" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>pointAlong</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Object ( <a href="http://geojson.org/geojson-spec.html#point" rel="external">GeoJSON Point</a> )</td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.pointAlong( Object shape ( <a href="http://geojson.org/geojson-spec.html" rel="external">GeoJSON object</a> ), Number percentage )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var pointAlong = $.geo.pointAlong( {
+      type: &quot;LineString&quot;,
+      coordinates: [[
+        [-75, 39.7],
+        [-74.8, 39.3],
+        [-75.2, 39.3]
+      ]]
+}, .5 )</pre></td>
+        </tr>
+      </table>
+      <p>The pointAlong method calculates a Point that lies a given fraction along the passed-in basic GeoJSON geometry object. The basic geometry types are Point, LineString and Polygon. A percentage of 0.0 returns the first Point; a percentage of 1.0 returns the last.</p>
+      <p>Technically, only LineStrings can be used properly in this calculation. However, pointAlong can be calculated for other geometry types. With Point objects, pointAlong will always return a copy of the original Point. For Polygon objects, pointAlong operates on the Polygon's perimeter (outer ring), i.e., myPolygon.coordinates[0]. For Polygons, percentage values of 0.0 and 1.0 will return the same Point.</p>
+      <p>If the argument is not a basic GeoJSON geometry object, this function returns undefined.</p>
+      <p>This function is similar to LineSegment.pointAlong in JTS.</p>
+     </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>polygonize | $.geo</title>
+  <meta name="description" content="jQuery Geo polygonize method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="polygonize" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>polygonize</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Object ( <a href="http://geojson.org/geojson-spec.html#polygon" rel="external">GeoJSON Polygon</a> ) </td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.polygonize( Array bbox ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> ) )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var polygon = $.geo.polygonize( bbox )</pre></td>
+        </tr>
+      </table>
+
+      <p>The polygonize method creates a new Polygon with an outer ring that matches the rectangle covered by the bbox. The Polygon is closed and will have five coordinates.</p>
+
+      <p>This function is a simplification/adaptation of the Polygonizer class in JTS. While the JTS object operates on the line work of geometry objects, this function operates on bounding boxes.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
   <title>$.geo.proj object | jQuery Geo</title>
   <meta name="description" content="$.geo.proj object">
   <meta name="author" content="Ryan Westphal">
@@ -105,10 +963,304 @@ $('map').geomap( {
   </div> <!-- end of #container -->
 
 
-  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
   <script src="../js/bootstrap.min.js"></script>
   
 </body>
 </html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>reaspect | $.geo</title>
+  <meta name="description" content="jQuery Geo reaspect method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="reaspect" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>reaspect</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Array ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> ) </td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.reaspect( Array bbox ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> ), Number ratio )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var widescreenBbox = $.geo.reaspect( bbox, 16 / 9 )</pre></td>
+        </tr>
+      </table>
+      <p>The reaspect method creates a new bbox with the same center as the original but forcing the ratio of width to height to a specific value.</p>
+      <p>If the original width is greater than the original height (think a landscape printout) then the width of the new bbox will be the same as the original but the new height will change to fit the ratio. If the original height is greater than the original width (think a portrait printout) then the new bbox height will remain unchanged but the width will to fit the ratio.</p>
+      <p>This function is not defined in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>recenter | $.geo</title>
+  <meta name="description" content="jQuery Geo recenter method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="recenter" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>recenter</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Array ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> ) </td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.recenter( Array bbox ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> ), Array (<a href="http://geojson.org/geojson-spec.html#positions" rel="external">GeoJSON position</a>) )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var moved = $.geo.recenter( bbox, [ -70, 42 ] )</pre></td>
+        </tr>
+      </table>
+
+      <p>The recenter method creates a new bbox with the same width and height as the original but moving the center to a new location.</p>
+
+      <p>This function is not defined in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>scaleBy | $.geo</title>
+  <meta name="description" content="jQuery Geo scaleBy method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="scaleBy" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>scaleBy</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Array ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> )</td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.scaleBy( Array bbox ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> ), Number scale )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var twiceAsBig = $.geo.scaleBy( bbox, 2 )</pre></td>
+        </tr>
+      </table>
+      <p>The scaleBy method creates a new bbox with the same center as the original but having a width and height that are both multiplied by the scale argument.</p>
+      <p>The scale argument is a percentage increase or decrease. This means that supplying 2 will increase the size of the bbox by 200%, which if thinking in terms of a map's view, would zoom out. Supplying .5 will decrease the size of the bbox to half its original size.</p>
+      <p>The scale argument must be greater than zero.</p>
+      <p>This function is not defined in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>width | $.geo</title>
+  <meta name="description" content="jQuery Geo width method">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="width" class="container">
+    <div data-role="header" data-theme="b">
+      <h1>width</h1>
+    </div>
+    
+    <div data-role="content">
+      <table>
+        <tr>
+          <th>return type</th>
+          <td>Number</td>
+        </tr>
+        <tr>
+          <th>syntax</th>
+          <td>$.geo.width( Array bbox ( <a href="http://geojson.org/geojson-spec.html#bounding-boxes" rel="external">GeoJSON bounding box</a> )</td>
+        </tr>
+        <tr>
+          <th>usage</th>
+          <td><pre>var width = $.geo.width( [ -71.1, 42.3, -71.0, 42.4 ] )</pre></td>
+        </tr>
+      </table>
+      <p>The width method returns the true width of a bbox in non-geodetic units. If you are using geomap with its default map service, the width is in meters because the default projection is web mercator meters.</p>
+      <p>This function is similar to Envelope.getWidth in JTS.</p>
+    </div>
+  </div> <!-- end of #container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
+
+<!doctype html>  
+
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>$.geo.WKT object | jQuery Geo</title>
+  <meta name="description" content="$.geo.WKT object">
+  <meta name="author" content="Ryan Westphal">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/style.css?v=2">
+  <link rel="stylesheet" href="../css/bootstrap.min.css" /><link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+
+  <div id="WKT" class="container">
+    <div data-role="header" data-theme="d">
+      <h1>$.geo.WKT object</h1>
+    </div>
+    
+    <div data-role="content">
+      <p>There are two commonly used formats to display a geometry object as text.</p>
+      
+      <p>The first is <a href="http://geojson.org/geojson-spec.html" rel="external">GeoJSON</a> which is a pure JavaScript Object Notation (JSON) encoding of objects following a specified format. jQuery Geo exclusivly uses GeoJSON objects throughout the library. You can use the native HTML5 <a href="https://developer.mozilla.org/en-US/docs/JSON" rel="external">JSON object</a> to convert between GeoJSON text and the JavaScript objects themselves.</p>
+
+      <p>The second is <a href="http://en.wikipedia.org/wiki/Well-known_text" rel="external">well-known text</a> (WKT). It considerably predates GeoJSON and can look a lot nicer when viewed in a database (well, databases that aren't JSON based to begin with (CouchDB, MongoDB, etc.) or databases that have more suppport for JSON such as PostgreSQL 9.2). The point is that at some point in web mapping, you may come across WKT and jQuery Geo has you covered.</p>
+
+      <p>The $.geo.WKT object has two functions: parse &amp; stringify. They are the same names as the HTML5 JSON object by design to give you the option of writing serialization functions that can take either the native JSON object or $.geo.WKT. The $.geo.WKT.parse function parses as WKT string and constructs a GeoJSON object that's ready to be used elsewhere in the library such as the geomap widget's <a href="../geomap/append.html">append function</a>. The stringify function accepts a JavaScript object that follows the GeoJSON specification and returns its WKT equivalent.</p>
+
+      <h2>parsing WKT strings</h2>
+
+      <p>To convert a WKT string into a GeoJSON formatted JavaScript object, you can pass the WKT string into the $.geo.WKT.parse( ) function:</p>
+
+      <pre>var geojsonObject = $.geo.WKT.parse( 'POINT (-71.070554128125 42.36859979580157)' );</pre>
+
+      <p>jQuery Geo supports parsing on all geometry types from Point to GeometryCollection.</p>
+
+      <h2>converting objects into WKT</h2>
+
+      <p>To convert a GeoJSON formatted object into a WKT string, pass the object to the $.geo.WKT.stringify( ) function:</p>
+
+      <pre>var wkt = $.geo.WKT.stringify( {
+  type: 'Point',
+  coordinates: [ -71.070554128125, 42.36859979580157 ]
+} );</pre>
+
+      <p>Since all geometry-based arguments in jQuery Geo are GeoJSON formatted JavaScript objects, you can convert them directly in a callback function. For example, if you are handling the <a href="../geomap/geomapclick.html">click event</a>:</p>
+
+      <pre>$( '#map' ).geomap( {
+  click: function( e, geo ) {
+    alert( $.geo.WKT.stringify( geo ) );
+  }
+} );</pre>
+
+      <h2>patterned after JSON</h2>
+
+      <p>The $.geo.WKT object's function names are the same as the native JSON object you find in modern web browsers. Therefore, you can write a geometry object serialization function that takes either:</p>
+
+      <pre>function geoToString( geo, serializer ) {
+  return serializer.stringify( geo );
+}
+
+// log JSON
+console.log( geoToString( geo, JSON ) );
+
+// log WKT
+console.log( geoToString( geo, $.geo.WKT ) );</pre>
+
+      <p>This limited example is not terribly useful but hints at what can be done.</p> 
+    </div>
+  </div> <!-- end of page -->
+
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquerygeo.com/jquery.geo-1.0.0-b2.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  
+</body>
+</html>
+
 
