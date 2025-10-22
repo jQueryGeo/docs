@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="jQuery Geo events" />
+  <meta charset="utf-8" />
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2025 by ryanttb (http://jsbin.com/wawix/7/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+  <title>jQuery Geo events</title>
+
+<style id="jsbin-css">
+/* example style */
+
+/* template style */
+
+html {
+  font-family: sans-serif;
+  font-size: 100%;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#info {
+  background: #fafafa;
+  border-radius: .5em;
+  box-shadow: .2em .2em .4em #222;
+  font-size: .8em;
+  max-width: 66%;
+  padding: .25em .5em;
+  position: absolute;
+  left: 1em;
+  top: 1em;
+}
+
+</style>
+</head>
+  
+<body>
+  
+  <div id="map">
+    <div id="info">
+      <p>The basic events are: move, click, dblclick, &amp; bboxchange. jQuery Geo triggers them when a user interacts with the map.</p>
+
+     <table cellspacing="0">
+      <thead>
+        <tr>
+          <th>
+            event (time)
+          </th>
+          <th>
+            geo argument
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="geomapmove">
+          <td>
+            move (<span class="date"></span>)
+          </td>
+          <td class="data">
+          </td>
+        </tr>
+        <tr class="geomapclick">
+          <td>
+            click (<span class="date"></span>)
+          </td>
+          <td class="data">
+          </td>
+        </tr>
+        <tr class="geomapdblclick">
+          <td>
+            dblclick (<span class="date"></span>)
+          </td>
+          <td class="data">
+          </td>
+        </tr>
+        <tr class="geomapbboxchange">
+          <td>
+            bboxchange (<span class="date"></span>)
+          </td>
+          <td class="data">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+      
+    </div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="../../js/jquery.geo-1.1.0.min.js"></script>
+<script>
+$(function() {
+  // create a map
+  var map = $("#map").geomap({
+    center: [ -71, 42 ],
+    zoom: 7,
+
+    // position events get a GeoJSON Point object
+    move: positionEventHandler,
+    click: positionEventHandler,
+    dblclick: positionEventHandler,
+
+    // bbox events get an object with a bbox property
+    bboxchange: bboxEventHandler
+    
+  });
+
+  function positionEventHandler( e, geo ) {
+    // jQuery stores the event type in e.type
+    // outside of the initialization function,
+    // the jQuery UI widget events all have a widget prefix
+    // in this case it's: geomap
+
+    // this example builds a selector for the class
+    // of the table's row for this event
+    // if the event is, e.g., move, e.type is geomapmove and the row we want is .geomapmove
+    var eventRowClass = "." + e.type;
+
+    // update the time stamp for this event
+    $(eventRowClass + " .date").text(('' + $.now()).substr(6));
+
+    // contained in the geo argument as a GeoJSON Point object
+
+    // the coordinates property is an array
+    var displayCoords = prettyArray( geo.coordinates );
+
+
+    // convert the map coordinates to pixel locations to show them as well
+    var displayPixels = map.geomap( "toPixel", geo.coordinates ).join( ", " );
+
+    // update the position data
+    $(eventRowClass + " .data").html("pixels: [ " + displayPixels + " ]<br>coords: [ " + displayCoords + " ]");
+  }
+
+  function bboxEventHandler( e, geo ) {
+    // again, build a selector for the class of the table's row for this event
+    // for example, the bboxchange event's e.type is geomapbboxchange
+    // and the row we want is .geomapbboxchange
+    var eventRowClass = "." + e.type;
+
+    // update the time stamp for this event
+    // cut off the first 6 digits because they're usually the same
+    $( eventRowClass + " .date" ).text( ('' + $.now( )).substr(6) );
+
+    // update the position data,
+    // contained in the geo argument as an object with a bbox property
+    // currently that's all the object has
+    $( eventRowClass + " .data" ).text( "[ " + prettyArray( geo.bbox ) + " ]" );
+  }
+  
+  
+  function prettyArray( value ) {
+    // return a string of the array having spaces between values and with each number having only two decimal places
+    var str = '';
+    
+    if ( value && $.isArray( value ) ) {
+      for ( var i = 0; i < value.length; i++ ) {
+        if ( $.isNumeric( value[ i ] ) ) {
+          if ( i > 0 ) {
+            str += ', ';
+          }
+          str += value[ i ].toFixed( 2 );
+        }
+      }
+    }    
+    
+    return '[ ' + str + ' ]';
+  }  
+});
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('require', 'displayfeatures');
+
+
+</script>
+
+</body>
+</html>
+  

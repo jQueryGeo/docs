@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="map projection" />
+  <meta charset="utf-8" />
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2025 by ryanttb (http://jsbin.com/utuYaj/9/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+  <title>map projection</title>
+
+<style id="jsbin-css">
+/* example style */
+
+dt, dd {
+  float: left;
+}
+
+dt {  
+  clear: left;
+  display: inline-block;
+  width: 2em;
+}
+
+/* template style */
+
+html {
+  font-family: sans-serif;
+  font-size: 100%;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#info {
+  background: #fafafa;
+  border-radius: .5em;
+  box-shadow: .2em .2em .4em #222;
+  font-size: .8em;
+  max-width: 66%;
+  padding: .25em .5em;
+  position: absolute;
+  left: 1em;
+  top: 1em;
+}
+
+</style>
+</head>
+  
+<body>
+  
+  <div id="map">
+    <div id="info">
+      <span>Using $.geo.proj to calculate geodetic &amp; projected coordinates of the center of your current map.</span>
+      <dl>
+        <dt>geodetic</dt><dd class="geodetic">[ <span class="lon"></span>, <span class="lat"></span> ]</dd>
+        <dt>projected</dt><dd class="projected">[ <span class="x"></span>, <span class="y"></span> ]</dd>
+      </dl>
+    </div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="../../js/jquery.geo-1.1.0.min.js"></script>
+<script>
+$(function() {
+  // create a map
+  map = $("#map").geomap({
+    // the updateBbox function uses $.geo.proj for both displays, so you can use either geodetic or projected coordinates for center and the app won't break, e.g., try Web Mercator x, y meters: 
+    // center: [ -8015003, 5160979 ],
+
+    center: [ -72, 42 ],
+    
+    zoom: 6,
+   
+    bboxchange: updateBbox
+  });
+  
+  // trigger some initial values
+  updateBbox( );
+  
+  function updateBbox( ) {
+    // when you move the map, we ask it
+    // for the new center in both
+    // geodetic (lon, lat) and
+    // projected (x, y / Web Mercator meters)
+    var center = map.geomap( 'option', 'center' );
+    
+    // geodetic means the latitude, longitude coordinates      
+    var geodetic = $.geo.proj.toGeodetic( center );
+    displayCoord( '.geodetic', geodetic );
+    
+    // projected is x, y coordinates on your projected plane (Web Mercator meters in this case)
+    // you would use projected coordinates when proper comparison or math is required such as calculating the distance between points
+    var projected = $.geo.proj.fromGeodetic( center );
+    displayCoord( '.projected', projected );
+  }
+  
+  function displayCoord( sel, coord ) {
+    var spans = $( sel ).children( 'span' );
+    $( spans[ 0 ] ).text( coord[ 0 ].toFixed( 2 ) );
+    $( spans[ 1 ] ).text( coord[ 1 ].toFixed( 2 ) );
+  }
+});
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('require', 'displayfeatures');
+
+
+</script>
+
+</body>
+</html>
+  

@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="Shingled services" />
+  <meta charset="utf-8" />
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2025 by ryanttb (http://jsbin.com/mosul/8/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+  <title>Shingled services</title>
+
+<style id="jsbin-css">
+/* example style */
+
+/* template style */
+
+html {
+  font-family: sans-serif;
+  font-size: 100%;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#info {
+  background: #fafafa;
+  border-radius: .5em;
+  box-shadow: .2em .2em .4em #222;
+  font-size: .8em;
+  max-width: 66%;
+  padding: .25em .5em;
+  position: absolute;
+  left: 1em;
+  top: 1em;
+}
+
+#info p {
+  margin: 0.25em 0;
+}
+
+#layers input {
+  vertical-align: middle;
+}
+
+#layers label {
+  cursor: pointer;
+}
+</style>
+</head>
+  
+<body>
+  
+  <div id="map">
+  </div>
+
+  <div id="info">
+    <p>Shingled (dynamic) map services do not have a tilingScheme and can show any scale.</p>
+    <p>These are hosted by MassGIS. They may take some time to load.</p>
+    <div id="layers">
+      <input type="checkbox" id="hydrography" name="layer" value="hydrography" checked /><label for="hydrography">Hydrography</label>
+      <input type="checkbox" id="forest" name="layer" value="forest" checked /><label for="forest">Forest</label>
+      <input type="checkbox" id="lobstah" name="layer" value="lobstah" /><label for="lobstah">Lobstah Harvest Zones</label>
+    </div>      
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="../../js/jquery.geo-1.1.0.min.js"></script>
+<script>
+$(function() {
+  // Set proj to null because we are working entirely in map units
+  $.geo.proj = null;
+
+  // some strings used in all services:
+  
+  // base URL for image request
+  var massGisHost = "http://giswebservices.massgis.state.ma.us/geoserver/wms";
+  
+  // view template used to get the map image
+  // notice that we can put the view arguments right into the template
+  var imageTemplate = "&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&FORMAT=image/png&SRS=EPSG:900913&BBOX={{:bbox}}&WIDTH={{:width}}&HEIGHT={{:height}}";
+
+  // create a map with some services from MassGIS
+  // the service types are "shingled"
+  // they must all be in the same coordinate system to work together
+  // to keep jQuery Geo's API simple, it will only work in one coordinate system at a time and will not reproject images on the fly
+
+  var map = $("#map").geomap({
+    services: [
+      // this is a basemap and will always be shown
+      // it shows the town boundaries & ocean
+      // it's the only one we need add the attr property
+      // since all services come from the same source
+      {
+        id: "massgis_towns",
+        type: "shingled",
+        src: massGisHost + "?LAYERS=massgis:GISDATA.OCEANMASK_POLY_MASURVEYCOAST,massgis:GISDATA.CENSUS2010TOWNS_POLY&FOO=Census 2010 Municipalities" + imageTemplate,
+        attr: "&copy; 2011 Commonwealth of Massachusetts"
+      },
+
+      // a water layer with ponds & rivers
+      // visible by default
+      {
+        id: "massgis_hydrography",
+        type: "shingled",
+        src: massGisHost + "?LAYERS=massgis:GISDATA.MAJPOND_POLY&TRANSPARENT=true" + imageTemplate
+      },
+
+      // a forest layer
+      // visible by default
+      {
+        id: "massgis_forest",
+        type: "shingled",
+        src: massGisHost + "?LAYERS=massgis:GISDATA.INTERIORFOREST_POLY&TRANSPARENT=true" + imageTemplate
+      },
+
+      // this is an optional lobster harvest zones layer
+      // it has style.visibility set to "hidden"
+      // and can be shown by the user
+      {
+        id: "massgis_lobstah",
+        type: "shingled",
+        src: massGisHost + "?LAYERS=massgis:GISDATA.LOBHARV_POLY&TRANSPARENT=TRUE&FOO=Lobster Harvest Zones 1997" + imageTemplate,
+        style: {
+          visibility: "hidden"
+        }
+      }
+    ],
+
+    // you must set bboxMax for shingled services for the zoom property to mean anything
+    bboxMax: [-20037508.34, -20037508.34, 20037508.34, 20037508.34],
+    
+    // shingled services do not have a tilingScheme
+    tilingScheme: null,
+
+    center: [ -7905718.0835847, 5212906.5572015 ],
+    zoom: 9
+  });
+
+  $("#layers input").click(function() {
+    // when a service object has the id property set,
+    // we can perform some geomap operations directly on the service
+
+    // in this case, the id of each extra layer is the same as the id for the checkbox but has a "massgis_" prefix 
+
+    // we can toggle the layer based on the prefix and input id
+    $("#massgis_" + this.id).geomap("toggle", $(this).prop("checked"));
+  });
+});
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('require', 'displayfeatures');
+
+
+</script>
+
+</body>
+</html>
+  

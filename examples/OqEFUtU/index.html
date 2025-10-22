@@ -1,0 +1,522 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="This example is an attempt to fit many features of jQuery Geo onto one page." />
+  <meta charset="utf-8" />
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2025 by ryanttb (http://jsbin.com/OqEFUtU/10/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+  <title>jQuery Geo - The Everything Demo</title>
+
+<style id="jsbin-css">
+/* example style */
+
+#info {
+  padding-right: 48px !important;
+  position: relative;
+}
+
+/* section links */
+section h2 {
+  cursor: pointer;
+  font-size: 1.1em;
+  white-space: nowrap;
+}
+
+section h2:before {
+  content: "▶ ";
+  display: inline-block;
+  font-size: .8em;
+  width: 1em;  
+}
+
+section.open h2:before {
+  content: "▼ ";
+}
+
+section .content {
+  display: none;
+}
+
+section.open .content {
+  display: block;
+}
+
+h3 {
+  display: inline;
+  font-size: 1em;
+}
+
+/* a label CSS example: all text for labels on the speedtest service will be purple and bold! */
+#broadband-speedtest {
+  color: purple;
+  font-weight: bold;
+}
+
+.modes {
+  margin: .5em 0;
+}
+
+#shapeLabels, #drawStyle, #clickTarget {
+  display: none;
+}
+
+#drawStyle label span {
+  display: inline-block;
+  font-weight: bold;
+  text-align: right;
+  width: 7em; 
+}
+
+#drawStyle input {
+  width: 6em;
+}
+
+.scrollOptions, .clickTargets, .toggleTargets {
+  display: inline-block; 
+}
+
+/* a loading gif as a data uri, hidden to start */
+#indicator {
+  background-image: url(data:image/gif;base64,R0lGODlhEAAQAPIAAP///38AAODCwqBCQn8AALBiYsCCgsiSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==);
+  display: none;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  height: 16px;
+  width: 16px;
+}
+
+/* template style */
+
+html {
+  font-family: sans-serif;
+  font-size: 100%;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#info {
+  background: #fafafa;
+  border-radius: .5em;
+  box-shadow: .2em .2em .4em #222;
+  font-size: .8em;
+  max-width: 66%;
+  padding: .25em .5em;
+  position: absolute;
+  left: 1em;
+  top: 1em;
+}
+
+</style>
+</head>
+  
+<body>
+  
+  <div id="map"></div>
+  
+  <div id="info">
+    
+    <div id="indicator"></div>
+    
+    <!-- map info -->     
+    <section class="not-mobile">
+      <h2>map info</h2>
+      
+      <div class="content">
+        <table id="mapInfo">
+          <tr><th>bbox</th><td data-option="bbox"></td></tr>
+          <tr><th>center</th><td data-option="center"></td></tr>
+          <tr><th>zoom</th><td data-option="zoom"></td></tr>
+        </table>
+      </div>
+    </section>
+    
+    <!-- basic options -->
+    <section>
+      <h2>basics</h2>
+      
+      <div class="content">
+        <label><input type="checkbox" id="togglePannable" checked="checked" /> pannable</label>
+        
+        <div class="scrollOption-container not-mobile">
+          <h3>scroll</h3>
+          <div class="scrollOptions">
+            <input type="radio" id="scrollOptionDefault" name="scrollOption" value="default" checked="checked" /><label for="scrollOptionDefault">default / scroll</label>
+            <input type="radio" id="scrollOptionOff" name="scrollOption" value="off" /><label for="scrollOptionOff">off</label>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- map mode -->
+    <section>
+      <h2>mode</h2>
+      
+      <div class="content">
+        <div class="modes">
+          <input type="radio" id="static" name="mode" value="static" /><label for="static">static</label>
+          <input type="radio" id="pan" name="mode" value="pan" checked="checked" /><label for="pan">pan</label>
+          <input type="radio" id="click" name="mode" value="click" /><label for="click">click</label>
+          <input type="radio" id="zoom" name="mode" value="zoom" /><label for="zoom">zoom</label>
+        </div>
+        
+        <div class="modes">
+          <input type="radio" id="drawPoint" name="mode" value="drawPoint" /><label for="drawPoint">drawPoint</label>
+          <input type="radio" id="drawLineString" name="mode" value="drawLineString" /><label for="drawLineString">drawLineString</label>
+          <input type="radio" id="drawPolygon" name="mode" value="drawPolygon" /><label for="drawPolygon">drawPolygon</label>
+        </div>
+        
+        <div class="modes">
+          <input type="radio" id="dragBox" name="mode" value="dragBox" /><label for="dragBox">dragBox</label>
+          <input type="radio" id="dragCircle" name="mode" value="dragCircle" /><label for="dragCircle">dragCircle</label>
+        </div>
+        
+        <div class="modes">
+          <!--
+jQuery Geo supports custom modes by letting you set the mode option to
+any string you want. You can set a cursor for your custom mode using the
+cursors option. When on a custom mode, you will get the geomapclick event.
+-->
+          <input type="radio" id="remove" name="mode" value="remove" /><label for="remove">remove</label>
+        </div>
+        
+        <div class="modes">
+          <input type="radio" id="measureLength" name="mode" value="measureLength" /><label for="measureLength">measureLength</label>
+          <input type="radio" id="measureArea" name="mode" value="measureArea" /><label for="measureArea">measureArea</label>
+        </div>
+      
+         <label id="shapeLabels">
+           <h3>label</h3>
+           <input type="text" name="shapeLabel" />
+        </label>
+        
+        <div id="drawStyle" class="not-mobile">
+          <h3>style</h3>
+          <div>
+            <label><span>color</span> <input type="color" name="color" value="#7f0000" /></label>
+            <label><span>opacity</span> <input type="text" name="opacity" value="1.0" /></label>
+          </div>
+          <div>
+            <label><span>fill</span> <input type="color" name="fill" value="" /></label>
+            <label><span>fillOpacity</span> <input type="text" name="fillOpacity" value=".2" /></label>
+          </div>
+          <div>
+            <label><span>stroke</span> <input type="color" name="stroke" value="" /></label>
+            <label><span>strokeOpacity</span> <input type="text" name="strokeOpacity" value="1" /></label>
+          </div>
+          <div>
+            <label><span>strokeWidth</span> <input type="number" name="strokeWidth" value="2" /></label>
+          </div>
+          <div>
+            <label><span>width</span> <input type="number" name="width" value="8" /></label>
+            <label><span>height</span> <input type="number" name="height" value="8" /></label>
+          </div>
+          <div>
+            <label><span>borderRadius</span> <input type="number" name="borderRadius" value="8" /></label>
+          </div>          
+        </div>
+
+        <div id="clickTarget">
+          <h3>target</h3>
+          <input type="radio" id="clickTargetWidget" name="clickTarget" value="widget" checked="checked" /><label for="clickTargetWidget">widget</label>
+          <input type="radio" id="clickTargetBasemapService" name="clickTarget" value="osm" /><label for="clickTargetBasemapService">basemap</label>
+          <input type="radio" id="clickTargetSpeedtestService" name="clickTarget" value="broadband-speedtest" /><label for="clickTargetSpeedtestService">speedtest</label>
+        </div>
+      </div>
+    </section>      
+
+    <!-- toggle -->
+    <section>
+      <h2>toggle</h2>
+      
+      <div class="content toggleTargets">
+        <label><input type="checkbox" id="toggleTargetBasemapService" name="toggleTarget" value="osm" checked="checked" /> basemap</label>
+        <label><input type="checkbox" id="toggleTargetSpeedtestService" name="toggleTarget" value="broadband-speedtest" checked="checked" /> speedtest</label>
+      </div>
+    </section>
+    
+    <!-- zoom -->
+    <section>
+      <h2>zoom</h2>
+      
+      <div class="content">      
+        <button id="zoomOut" type="button">out</button>        
+        <button id="zoomIn" type="button">in</button>
+      </div>
+    </section>
+    
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="../../js/jquery.geo-1.1.0.min.js"></script>  
+<script>
+$(function() {
+  // define two tiled services
+  var services = [
+    // a free basemap tile set from MapQuest
+    {
+      id: "osm",
+      type: "tiled",
+      src: function (view) {
+        return "//" + String.fromCharCode(97 + (view.index % 3)) + ".tile.openstreetmap.org/" + view.zoom + "/" + view.tile.column + "/" + view.tile.row + ".png";
+      },
+      attr: '&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
+    },
+
+    // define a second service as a layer on top of the basemap
+    // we use this service as the target when "target" is set to service in this demo
+    {
+      id: "broadband-speedtest",
+      type: "tiled",
+      src: function( view ) {
+        return "//" + String.fromCharCode(97 + (view.index % 4)) + ".tiles.mapbox.com/v3/fcc.daey60dd/" + view.zoom + "/" + view.tile.column + "/" + view.tile.row + ".png";
+      },
+      attr: "Speed Test data maintained by the NTIA, in collaboration with the FCC"
+    }
+  ];  
+  
+  // create a map
+  var map = $("#map").geomap({
+    // add a cursor for our custom mode: remove
+    cursors: { remove: "crosshair" },
+
+    // use the services array defined above
+    services: services,
+
+    // these tiled services are in jQuery Geo's default tilingScheme, web mercator
+    // we don't need to change it but will write it here in comments, for this demo
+    /*
+    tilingScheme: {
+      tileWidth: 256,
+      tileHeight: 256,
+      levels: 18,
+      basePixelSize: 156543.03392799936,
+      pixelSizes: null,
+      origin: [ -20037508.342787, 20037508.342787 ]
+    },
+    */
+
+    // center & zoom values that default to showing the contenental United States of America
+    center: [ -89.34, 38.84 ],
+    zoom: 5,
+
+    // the speedtest service only supports zooming out to level 3, lock the map to that min zoom
+    zoomMin: 3,
+
+    // the speedtest service only zooming in to level 10, lock the map to that max zoom
+    zoomMax: 10,
+
+    loadstart: function( ) {
+      // we can show an indicator when the map widget is loading images via the loadstart event
+      $("#indicator").show( );
+    },
+
+    loadend: function( ) {
+      // we can hide the indicator when the map widget is done loading images via the loadend event
+      $("#indicator").hide( );
+    },
+    bboxchange: function( e, geo ) {
+      // when the bbox changes, update the info section with new option values
+      updateInfo( );
+    },    
+
+    shape: function( e, geo ) {
+      // both the measure and draw/drag modes trigger the shape event
+      // but we only want to append for the draw & drag
+      if ( map.geomap( "option", "mode" ).substr( 0, 3 ) == "dra" ) {
+        // when the user draws or drags a shape, show it on the map
+        // the shape event triggers when the user finishes drawing a shape
+        // the geo argument is a GeoJSON object representing the shape
+
+        // for this example, we'll append it to the map forcing an
+        // individual style that matches the current drawStyle
+
+        // make a copy of the current drawStyle
+        var drawStyle = $.extend( { }, map.geomap( "option", "drawStyle" ) );
+
+        // grab the label (if any) from the input
+        var label = $( "#shapeLabels input" ).val( );
+
+        // append the shape using that style
+        // however, depending on which target is checked, we will append the shape to either the map widget itself or a specific map service
+        if ( $( "#clickTargetWidget" ).is( ":checked" ) ) {
+          // if the map is our target, just append the shape to the map
+          // if there's a label entered, used it
+          map.geomap( "append", geo, drawStyle, label );
+        } else {
+          // otherwise, grab a reference to a service
+          // ( by id in this case ) and append the shape to that
+          // the value of the remaining radio buttons matches the id of a service
+          // if there's a label entered, used it
+          var serviceToAppend = $( "#" + $( "input[name='clickTarget']:checked" ).val( ) );
+
+          $( serviceToAppend ).geomap( "append", geo, drawStyle, label );
+
+          // also note, that the label is controlled seperately from the shape, by CSS, rather than by jQuery Geo shapeStyle objects
+          // if you look at the CSS, you will notice:
+          //
+          // #broadband-speedtest { color: purple; font-weight: bold; }
+          //
+          // which makes all labels on the speedtest service blue text
+        }
+      }
+    },
+    
+    click: function( e, geo ) {
+      if ( map.geomap( "option", "mode" ) == "remove" ) {
+        // when the user clicks the map while in our custom mode, remove,
+        // we will search for shapes on either the map widget itself
+        // (and, by design, all map services) or a single, specific map service
+
+        // we'll use a nice, fat 5px radius for the searches here, that's what the (, 5) is below
+
+        // however, in this demo, we remove any shapes found from either the map or service
+
+        // if the map is our target, grab the map reference
+        // otherwise, grab a reference to a service, in this case, by id
+        var target = $( "#clickTargetWidget" ).is( ":checked" ) ? map : $( "#" + $( "input[name='clickTarget']:checked" ).val( ) );
+
+        // by design, calling find on the map itself returns all shapes at that location
+        // even if they have been appended to a service
+        // when target is the service, find is limited to shapes that have been appended there
+        var shapes = target.geomap( "find", geo, 3 );
+
+        // even though we potentially found service-level shapes with the find method,
+        // calling remove on the map does not remove from all services
+        // however, here we're calling remove on the same target where we found the shapes
+        // (note: remove can take an array of shapes, which the find method returns)
+        target.geomap( "remove", shapes );
+      }
+    }
+  });
+  
+  $( 'section h2' ).click( function( ) {
+    // show/hide whatever's in this section
+    $( this ).parent( ).toggleClass( 'open' );
+  } );
+  
+  $( "#togglePannable" ).change( function( ) {
+    // change the pannable option to allow users to pan or not pan your map
+    map.geomap( "option", "pannable", $( this ).is( ":checked" ) );
+  } );
+  
+  $( ".scrollOptions input" ).click( function( ) {
+    // set the map's scroll option based on value of the input clicked
+    // currently, default and scroll are the same; the only other option is off
+    var scrollValue = $( this ).val( );
+    map.geomap( "option", "scroll", scrollValue );
+  } );
+  
+  $( ".modes input" ).click( function () {
+    // set the map's mode option based on value of the input clicked
+    var modeValue = $( this ).val( );
+    map.geomap( "option", "mode", modeValue );
+
+    // if mode is one of the draw/drag modes (or remove), show the target section, otherwise hide it
+    $( "#clickTarget" ).toggle( modeValue.substr( 0, 3 ) === "dra" || modeValue === "remove" );
+
+    // if mode is one of the draw/drag modes,
+    // show the label inputs & shape style as well
+    $( "#shapeLabels, #drawStyle" ).toggle( modeValue.substr( 0, 3 ) === "dra" );
+  } );
+    
+  $( "#drawStyle input" ).change( function( ) {
+    // when an input of the drawStyle area changes,
+    // immediately set the property of geomap's drawStyle option
+    
+    // keep in mind that the three point-only styles (width, height & borderRadius)
+    // cannot be seen because with drawPoint, the shape event triggers immediately
+    // without drawing a shape
+    // this example, however, does use them when appending the shape after a click
+    
+    // first, we can grab a jQuery reference to the input that changed
+    var $this = $( this );
+    
+    // next, we can create an object that represents this change
+    // this example doesn't, but you can set more than one property
+    // on geomap's drawStyle option at a time
+    var styleOption = { };
+    styleOption[ $this.attr( "name" ) ] = $this.val();
+    
+    map.geomap( "option", "drawStyle", styleOption );
+  } );
+  
+  $( ".toggleTargets input" ).change( function( ) {
+    // when a service is toggled, we tell the geomap widget to toggle it
+    // the value of each checkbox input equals the id of a service
+    var checkboxClicked = $( this );
+    var serviceToToggle = $( "#" + checkboxClicked.val( ) );
+
+    // toggle the service, shapes on the service will also be toggled
+    serviceToToggle.geomap( "toggle" );
+  } );
+
+
+  $( "#zoomOut" ).click( function( ) {
+    // use the zoom method to zoom out
+    map.geomap( "zoom", -1 );
+  } );
+
+  $( "#zoomIn" ).click( function( ) {
+    // also use the zoom method to zoom in
+    map.geomap( "zoom", +1 );
+  } );
+  
+  // update the info section with initial option values
+  updateInfo( );
+  
+  function updateInfo( ) {
+    // update the info section with option values
+    $( "#mapInfo td" ).each( function( ) {
+      // a reference to the current option td element
+      var optionCell = $( this );
+      
+      // since each td has a data-option attribute,
+      // jQuery can extract the option value via the data function
+      var optionValue = map.geomap( "option", optionCell.data( "option" ) );
+      
+      if ( $.isArray( optionValue ) ) {
+        // display array values a little nicer
+        $.each( optionValue, function( i ) {
+          optionValue[ i ] = this.toFixed( 2 );
+        } );
+        optionCell.text( "[ " + optionValue.join( ", " ) + " ]" );
+      } else {
+        optionCell.text( optionValue );
+      }
+    } );  
+  }
+});
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('require', 'displayfeatures');
+
+
+</script>
+
+</body>
+</html>
+  

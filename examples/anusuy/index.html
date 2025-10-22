@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="Map popup with labels" />
+  <meta charset="utf-8" />
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2025 by ryanttb (http://jsbin.com/anusuy/9/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+  <title>Map popup with labels</title>
+
+<style id="jsbin-css">
+/* example style */
+
+.geo-label {
+  margin: -2em 0 0 1em;
+  padding: .25em .5em;
+  font-family: Ariel;
+  font-size: .7em;
+  color: #444;
+  background: #dedede;
+  border-radius: 8px;
+  border: solid 2px #444;
+  width: auto;
+  
+  /* we will show it on geomapmove */
+  display: none;
+}
+
+/* template style */
+
+html {
+  font-family: sans-serif;
+  font-size: 100%;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#info {
+  background: #fafafa;
+  border-radius: .5em;
+  box-shadow: .2em .2em .4em #222;
+  font-size: .8em;
+  max-width: 66%;
+  padding: .25em .5em;
+  position: absolute;
+  left: 1em;
+  top: 1em;
+}
+
+</style>
+</head>
+  
+<body>
+  
+  <div id="map">
+    <div id="info">Hover over monuments in Naga, Philippines for a CSS popup.</div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="../../js/jquery.geo-1.1.0.min.js"></script>  
+<script>
+$(function() {
+// create a map centered on Naga
+// style the shape points
+var map = $("#map").geomap( {
+    center: [ 123.19, 13.62 ],
+    zoom: 14,
+    shapeStyle: {
+        color: "#444",
+        width: 12,
+        height: 12
+    },
+    move: function( e, geo ) {
+        // search for a monument under the cursor
+        var monument = map.geomap("find", geo, 12);
+        if ( monument.length > 0 ) {
+            // if found, show its label
+            $("." + monument[0].properties.id).closest(".geo-label").show();
+        } else {
+            // otherwise, hide all labels
+            $(".geo-label").hide();
+        }
+    }
+} );
+
+// two monument GeoJSON Features
+var monuments = [ {
+    type: "Feature",
+    geometry: {
+        type: "Point",
+        coordinates: [123.186985, 13.627544]
+    },
+    properties: {
+        id: 6115163,
+        name: "Naga Metropolitan Cathedral"
+    }
+}, {
+    type: "Feature",
+    geometry: {
+        type: "Point",
+        coordinates: [123.200, 13.632001]
+    },
+    properties: {
+        id: 6115159,
+        name: "Basilica of Our Lady of Penafrancia"
+    }
+} ];
+
+$.each( monuments, function() {
+    // label has a class that matches the monument's id
+    // false (at the end) stops jQuery Geo from trying to refresh after each append
+    map.geomap("append", this, '<span class="' + this.properties.id + '">' +  this.properties.name + '</span>', false);
+} );
+
+// we're done appending, refresh the map
+map.geomap("refresh");
+});
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('require', 'displayfeatures');
+
+
+</script>
+
+</body>
+</html>
+  

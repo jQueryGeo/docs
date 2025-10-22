@@ -1,0 +1,392 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="jQuery Geo  geometry functions" />
+  <meta charset="utf-8" />
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2025 by ryanttb (http://jsbin.com/hiwoq/4/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+  <title>jQuery Geo geometry functions</title>
+
+<style id="jsbin-css">
+/* example style */
+
+.calc
+{
+  display: inline-block;
+  vertical-align: top;
+}
+
+td
+{
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.red { color: #c00; }
+.green { color: #0c0; }
+.blue { color: #00c; }
+
+tr.all {
+  display: none;
+}
+
+/* template style */
+
+html {
+  font-family: sans-serif;
+  font-size: 100%;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#info {
+  background: #fafafa;
+  border-radius: .5em;
+  box-shadow: .2em .2em .4em #222;
+  font-size: .8em;
+  max-width: 66%;
+  padding: .25em .5em;
+  position: absolute;
+  left: 1em;
+  top: 1em;
+}
+
+</style>
+</head>
+  
+<body>
+  
+  <div id="map">
+    <div id="info">
+      <div>Functions in the $.geo namespace can give you info about shapes. The large red box is the bbox of all red shapes.</div>
+
+      <div class="calc">
+        <table>
+          <tr>
+            <td></td>
+            <th>distance</th>
+          </tr>
+          <tr>
+            <th><span class="red">pt</span>, <span class="red">pt</span></th>
+            <td class="rpt-2-rpt-distance"></td>
+          </tr>
+          <tr>
+            <th><span class="red">pt</span>, <span class="red">line</span></th>
+            <td class="rpt-2-line-distance"></td>
+          </tr>
+          <tr>
+            <th><span class="red">pt</span>, <span class="red">poly</span></th>
+            <td class="rpt-2-poly-distance"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">line</span>, <span class="red">pt</span></th>
+            <td class="line-2-rpt-distance"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">line</span>, <span class="red">line</span></th>
+            <td class="line-2-line-distance"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">line</span>, <span class="red">poly</span></th>
+            <td class="line-2-poly-distance"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">poly</span>, <span class="red">pt</span></th>
+            <td class="poly-2-rpt-distance"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">poly</span>, <span class="red">line</span></th>
+            <td class="poly-2-line-distance"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">poly</span>, <span class="red">poly</span></th>
+            <td class="poly-2-poly-red-distance"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">poly</span>, <span class="blue">poly</span></th>
+            <td class="poly-2-poly-blue-distance"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="calc">
+        <table>
+          <tr>
+            <td></td>
+            <th>contains</th>
+          </tr>
+          <tr>
+            <th><span class="red">pt</span>, <span class="red">pt</span></th>
+            <td class="rpt-2-rpt-contains"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">pt</span>, <span class="red">line</span></th>
+            <td class="rpt-2-line-contains"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">pt</span>, <span class="red">poly</span></th>
+            <td class="rpt-2-poly-contains"></td>
+          </tr>
+          <tr>
+            <th><span class="red">line</span>, <span class="red">pt</span></th>
+            <td class="line-2-rpt-contains"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">line</span>, <span class="red">line</span></th>
+            <td class="line-2-line-contains"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">line</span>, <span class="red">poly</span></th>
+            <td class="line-2-poly-contains"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">poly</span>, <span class="red">pt</span></th>
+            <td class="poly-2-rpt-contains"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">poly</span>, <span class="red">line</span></th>
+            <td class="poly-2-line-contains"></td>
+          </tr>
+          <tr>
+            <th><span class="red">poly</span>, <span class="red">poly</span></th>
+            <td class="poly-2-poly-contains"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="calc">
+        <table>
+          <tr>
+            <td></td>
+            <th>contains</th>
+          </tr>
+          <tr class="all">
+            <th><span class="red">poly</span>, <span class="green">pt</span></th>
+            <td class="poly-2-gpt-contains"></td>
+          </tr>
+          <tr>
+            <th><span class="red">poly</span>, <span class="green">line</span></th>
+            <td class="poly-2-gline-contains"></td>
+          </tr>
+          <tr>
+            <th><span class="red">poly</span>, <span class="green">poly</span></th>
+            <td class="poly-2-gpoly-contains"></td>
+          </tr>
+          <tr>
+            <th><span class="red">poly</span>, <span class="blue">poly</span></th>
+            <td class="poly-2-bpoly-contains"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="calc">
+        <table>
+          <tr>
+            <td></td>
+            <th>centroid</th>
+          </tr>
+          <tr>
+            <th><span class="red">pt</span></th>
+            <td class="rpt-centroid"></td>
+          </tr>
+          <tr>
+            <th><span class="red">line</span></th>
+            <td class="rline-centroid"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="red">poly</span></th>
+            <td class="rpoly-centroid"></td>
+          </tr>
+          <tr class="all">
+            <th><span class="green">poly</span></th>
+            <td class="gpoly-centroid"></td>
+          </tr>
+          <tr>
+            <th><span class="blue">poly</span></th>
+            <td class="bpoly-centroid"></td>
+          </tr>
+        </table>
+      </div>
+      
+      
+    </div>
+  
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="../../js/jquery.geo-1.1.0.min.js"></script>
+<script>
+$(function() {
+  // NOTE:
+  // There are more test that aren't shown in the UI but are calculated here. Change tr.all's display to block in CSS to see them.
+  
+  // create a map
+  var map = $("#map").geomap({
+    center: [-71.6, 42.3604823],
+    zoom: 8
+  });
+  
+  // bbox of all red shapes
+  var redBbox = null;
+
+  // append a red Point
+  var pt = {
+    type: "Point",
+    coordinates: [-71, 42]
+  };
+  map.geomap("append", pt);
+
+  // use the point's coordinate as our initial bbox (will be converted to bbox)
+  redBbox = $.geo.include( redBbox, pt.coordinates );
+
+  // append a red LineString
+  var line = {
+    type: "LineString",
+    coordinates: [
+      [-71.5, 42],
+      [-72, 41.5]
+    ]
+  };
+  map.geomap("append", line);
+
+  // include the line's bbox
+  redBbox = $.geo.include( redBbox, $.geo.bbox( line ) );
+
+  // append a red Polygon
+  var poly = {
+    type: "Polygon",
+    coordinates: [[
+      [-72.5, 41.7],
+      [-72.3, 41.3],
+      [-72.7, 41.3],
+      [-72.5, 41.7]
+    ]]
+  };
+  map.geomap("append", poly);
+
+  // include the polygon's bbox
+  redBbox = $.geo.include( redBbox, $.geo.bbox( poly ) );
+
+  // draw the bbox of red shapes
+  map.geomap( "append", $.geo.polygonize( redBbox ), {
+    fill: "transparent",
+    strokeWidth: 1
+  } );
+
+  // distance calculations between all red shapes
+  $(".rpt-2-rpt-distance").text($.geo.distance(pt, pt));
+  $(".rpt-2-line-distance").text($.geo.distance(pt, line));
+  $(".rpt-2-poly-distance").text($.geo.distance(pt, poly));
+
+  $(".line-2-rpt-distance").text($.geo.distance(line, pt));
+  $(".line-2-line-distance").text($.geo.distance(line, line));
+  $(".line-2-poly-distance").text($.geo.distance(line, poly));
+
+  $(".poly-2-rpt-distance").text($.geo.distance(poly, pt));
+  $(".poly-2-line-distance").text($.geo.distance(poly, line));
+  $(".poly-2-poly-red-distance").text($.geo.distance(poly, poly));
+
+  // contains relationships between all red shapes
+  $(".rpt-2-rpt-contains").text($.geo.contains(pt, pt));
+  $(".rpt-2-line-contains").text($.geo.contains(pt, line));
+  $(".rpt-2-poly-contains").text($.geo.contains(pt, poly));
+
+  $(".line-2-rpt-contains").text($.geo.contains(line, pt));
+  $(".line-2-line-contains").text($.geo.contains(line, line));
+  $(".line-2-poly-contains").text($.geo.contains(line, poly));
+
+  $(".poly-2-rpt-contains").text($.geo.contains(poly, pt));
+  $(".poly-2-line-contains").text($.geo.contains(poly, line));
+  $(".poly-2-poly-contains").text($.geo.contains(poly, poly));
+
+  // append a green Point inside the red Polygon
+  var gpt = {
+    type: "Point",
+    coordinates: [-72.5, 41.6]
+  };
+  map.geomap("append", gpt, { color: "green" });
+
+  // append a green LineString inside the red Polygon
+  var gline = {
+    type: "LineString",
+    coordinates: [
+      [-72.55, 41.5],
+      [-72.45, 41.5]
+    ]
+  };
+  map.geomap("append", gline, { color: "green", strokeWidth: "3px" });
+
+  // append a green Polygon completely inside the red Polygon
+  var gpoly = {
+    type: "Polygon",
+    coordinates: [[
+      [-72.55, 41.45],
+      [-72.5, 41.35],
+      [-72.65, 41.35],
+      [-72.55, 41.45]
+    ]]
+  };
+  map.geomap("append", gpoly, { color: "green", strokeWidth: "3px" });
+
+  // contains relationships between the red polygon & some green shapes
+  // these all return true because the red polygon completely contains all of them
+  $(".poly-2-gpt-contains").text($.geo.contains(poly, gpt));
+  $(".poly-2-gline-contains").text($.geo.contains(poly, gline));
+  $(".poly-2-gpoly-contains").text($.geo.contains(poly, gpoly));
+
+  // append a blue Polygon partially inside the red Polygon
+  var bpoly = {
+    type: "Polygon",
+    coordinates: [[
+      [-72.35, 41.45],
+      [-72.25, 41.35],
+      [-72.45, 41.35],
+      [-72.35, 41.45]
+    ]]
+  };
+  map.geomap("append", bpoly, { color: "blue", strokeWidth: "3px" });
+
+  // contains relationships between the red polygon the blue polygon
+  // this returns false because the red polygon does not completely contain the blue one
+  $(".poly-2-bpoly-contains").text($.geo.contains(poly, bpoly));
+  $(".poly-2-poly-blue-distance").text($.geo.distance(poly, bpoly));
+
+  // centroid calculations for all red shapes and the green and blue polygons
+  $(".rpt-centroid").text($.geo.centroid(pt).coordinates.join(", "));
+  $(".rline-centroid").text($.geo.centroid(line).coordinates.join(", "));
+  $(".rpoly-centroid").text($.geo.centroid(poly).coordinates.join(", "));
+  $(".gpoly-centroid").text($.geo.centroid(gpoly).coordinates.join(", "));
+  $(".bpoly-centroid").text($.geo.centroid(bpoly).coordinates.join(", "));
+
+});
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('require', 'displayfeatures');
+
+
+</script>
+
+</body>
+</html>
+  

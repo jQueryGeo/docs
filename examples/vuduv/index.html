@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="KML points" />
+  <meta charset="utf-8" />
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2025 by ryanttb (http://jsbin.com/vuduv/8/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+  <title>KML points</title>
+
+<style id="jsbin-css">
+/* example style */
+
+.geo-label {
+  margin: -2em 0 0 1em;
+  padding: .25em .5em;
+  font-family: Ariel;
+  font-size: .7em;
+  color: #444;
+  background: #dedede;
+  border-radius: 8px;
+  border: solid 2px #444;
+  width: auto;
+}
+
+/* template style */
+
+html {
+  font-family: sans-serif;
+  font-size: 100%;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#info {
+  background: #fafafa;
+  border-radius: .5em;
+  box-shadow: .2em .2em .4em #222;
+  font-size: .8em;
+  max-width: 66%;
+  padding: .25em .5em;
+  position: absolute;
+  left: 1em;
+  top: 1em;
+}
+
+</style>
+</head>
+  
+<body>
+  
+  <div id="map">
+    <div id="info">Example of parsing a simple KML file as GeoJSON points to append.</div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="../../js/jquery.geo-1.1.0.min.js"></script>
+<script>
+$(function() {
+  // start with xml text
+  var kml = '<?xml version="1.0" encoding="utf-8"?> <kml xmlns="http://www.opengis.net/kml/2.2"> <Placemark> <name>My office</name> <description>This is the location of my office.</description> <Point> <coordinates>-71.11835,42.3801</coordinates> </Point> </Placemark> </kml>';
+
+  // parsed xml document
+  var kmlDoc = $.parseXML( kml );
+
+  // create a map
+  var map = $( "#map" ).geomap( {
+    center: [ -71.12, 42.38 ],
+    zoom: 15
+  } );
+
+  // storage for our parsed coordinate element
+  var cEl;
+  
+  // storage for our parsed coordinate values
+  var c;
+
+  // find & iterate over Point features
+  $(kmlDoc).find("Placemark").each(function() {
+    // find the coordinates element on this Point element
+    cEl = $(this).find("coordinates");
+
+    // extract and split the coordinate's values
+    c = $(cEl).text().split(",");
+
+    // append the coordinate to the map
+    map.geomap( "append", {
+      type: "Point",
+      coordinates:[ parseFloat( c[0] ), parseFloat( c[1] ) ]
+    }, {
+      fillOpacity: 1
+    }, $(this).find("name").text() );
+  });
+});
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('require', 'displayfeatures');
+
+
+</script>
+
+</body>
+</html>
+  

@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="USA states" />
+  <meta charset="utf-8" />
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2025 by ryanttb (http://jsbin.com/osehuj/5/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+  <title>USA states</title>
+
+<style id="jsbin-css">
+/* example style */
+
+/* template style */
+
+html {
+  font-family: sans-serif;
+  font-size: 100%;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#info {
+  background: #fafafa;
+  border-radius: .5em;
+  box-shadow: .2em .2em .4em #222;
+  font-size: .8em;
+  max-width: 66%;
+  padding: .25em .5em;
+  position: absolute;
+  left: 1em;
+  top: 1em;
+}
+
+</style>
+</head>
+  
+<body>
+  
+  <div id="map">
+    <div id="info">Click a state to change its color.</div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="../../js/jquery.geo-1.1.0.min.js"></script>
+<script>
+$(function() {
+  // create a map
+  var map = $("#map").geomap({
+    center: [-96.0595678, 42.3604823],
+    zoom: 5,
+    mode: "drawPoint",
+    shape: function (e, geo) {
+      // find a state at the click point
+      var state = map.geomap("find", geo, 0);
+      
+      if (state.length > 0) {
+        // remove the old state
+        map.geomap("remove", state[0]);
+        
+        var color = Math.round(0xffffff * Math.random()).toString(16);
+        
+        // append a new one with a different color
+        map.geomap("append", state[0], {
+          color: "#" + ( color.length == 5 ? "0" : "" ) + color
+        });
+      }
+    }
+  });
+  
+  // download state boundries via ajax
+  $.ajax({
+    url: "http://data.jquerygeo.com/usastates.json",
+    dataType: "json",
+    success: function (result) {
+      map.geomap("append", result);
+    },
+    error: function (xhr) {
+      alert(xhr.statusText);
+    }
+  });
+});
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('require', 'displayfeatures');
+
+
+</script>
+
+</body>
+</html>
+  

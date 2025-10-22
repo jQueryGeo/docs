@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="jQuery Geo logos" />
+  <meta charset="utf-8" />
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2025 by ryanttb (http://jsbin.com/ecequf/7/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+  <title>jQuery Geo logos</title>
+
+<style id="jsbin-css">
+/* example style */
+
+/* template style */
+
+html {
+  font-family: sans-serif;
+  font-size: 100%;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#info {
+  background: #fafafa;
+  border-radius: .5em;
+  box-shadow: .2em .2em .4em #222;
+  font-size: .8em;
+  max-width: 66%;
+  padding: .25em .5em;
+  position: absolute;
+  left: 1em;
+  top: 1em;
+}
+
+</style>
+</head>
+  
+<body>
+  
+  <div id="map">
+    <div id="info">Click to add jQuery Geo logos as shapes.<br>Zoom in and click to add more!</div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="../../js/jquery.geo-1.1.0.min.js"></script>
+<script>
+$(function() {
+  // create a map
+  var map = $("#map").geomap({
+    center: [-75, 40],
+    zoom: 5,
+    mode: "drawPoint",
+    shape: function (e, geo) {
+      // add a logo at the click point
+      addLogo(geo);
+    }
+  });
+  
+  // logos are built as geometry and added as shapes
+  // therefore, the logos spread out as you zoom in
+  function addLogo(geo) {
+    var geoPixels = map.geomap("toPixel", geo.coordinates),
+        logoOuterCoords = map.geomap("toMap", [
+          [geoPixels[0] - 16, geoPixels[1]],
+          [geoPixels[0] - 15, geoPixels[1] + 6],
+          [geoPixels[0] - 11, geoPixels[1] + 11],
+          [geoPixels[0] - 6, geoPixels[1] + 15],
+          [geoPixels[0], geoPixels[1] + 16]
+        ]),
+        logoOuterPoints = [],
+        logoInnerCoords = map.geomap("toMap", [
+          [geoPixels[0] - 8, geoPixels[1]],
+          [geoPixels[0] - 6, geoPixels[1] + 6],
+          [geoPixels[0], geoPixels[1] + 8]
+        ]),
+        logoInnerPoints = [],
+        logoCornerCoord = geo.coordinates,
+        logoLines = {
+          type: "GeometryCollection",
+          geometries: []
+        },
+        logoPoints = {
+          type: "GeometryCollection",
+          geometries: []
+        };
+    
+    $.merge(logoLines.geometries, [{
+      type: "LineString",
+      coordinates: logoOuterCoords
+    }]);
+    
+    $.merge(logoLines.geometries, [{
+      type: "LineString",
+      coordinates: logoInnerCoords
+    }]);
+    
+    $.each(logoOuterCoords, function (i) {
+      logoOuterPoints[i] = {
+        type: "Point",
+        coordinates: this
+      };
+    });
+    
+    $.merge(logoPoints.geometries, logoOuterPoints);
+    
+    $.each(logoInnerCoords, function (i) {
+      logoInnerPoints[i] = {
+        type: "Point",
+        coordinates: this
+      };
+    });
+        
+    $.merge(logoPoints.geometries, logoInnerPoints);
+    
+    $.merge(logoPoints.geometries, [{
+      type: "Point",
+      coordinates: logoCornerCoord
+    }]);
+    
+    map.geomap("append", logoLines, { strokeWidth: "2px", fill: "#faa", fillOpacity: 1 }, false);
+    map.geomap("append", logoPoints, { strokeWidth: "1px", width: "4px", height: "4px", fill: "#faa", fillOpacity: 1 });
+  }
+});
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('require', 'displayfeatures');
+
+
+</script>
+
+</body>
+</html>
+  

@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="basemap switcher" />
+  <meta charset="utf-8" />
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2025 by ryanttb (http://jsbin.com/ejujas/12/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+  <title>basemap switcher</title>
+
+<style id="jsbin-css">
+/* example style */
+
+label {
+  color: #ccc;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0;
+  overflow: hidden;
+  padding: .5em;
+}
+
+label.selected, label:hover {
+  color: #d66;
+}
+
+label:first-child {
+  border-right: 1px solid #dedede;
+}
+
+input {
+  margin-left: -2.25em;
+}
+
+label span {
+  margin-left: 1em;
+}
+
+/* template style */
+
+html {
+  font-family: sans-serif;
+  font-size: 100%;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#info {
+  background: #fafafa;
+  border-radius: .5em;
+  box-shadow: .2em .2em .4em #222;
+  font-size: .8em;  
+  width: 10em;
+  padding: 0;
+  position: absolute;
+  left: 1em;
+  text-align: center;
+  top: 1em;
+}
+
+</style>
+</head>
+  
+<body>
+  
+  <div id="map">
+  </div>
+  
+  <div id="info">
+    <label class="selected"><input type="radio" name="basemap" value="street" checked="checked" /><span>street</span></label><label><input name="basemap" type="radio" value="aerial" /><span>aerial</span></label>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="../../js/jquery.geo-1.1.0.min.js"></script>  
+<script>
+$(function() {
+  
+  // create a map with two basemap services, the aerial service is hidden
+  
+  // note that the space in the "class" properties below means both services
+  // have the basemap class but each one has a second class that we use to show/hide them
+  var map = $( "#map" ).geomap( {
+    center: [ -71.0595678, 42.3604823 ],
+    zoom: 8,
+    
+    services: [
+      {
+        "class": "basemap street",
+        type: "tiled",
+        src: function (view) {
+          return "//" + String.fromCharCode(97 + (view.index % 3)) + ".tile.openstreetmap.org/" + view.zoom + "/" + view.tile.column + "/" + view.tile.row + ".png";
+        },
+        attr: '&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
+      },
+      
+      {
+        "class": "basemap aerial",
+        type: "tiled",
+        src: function( view ) {
+          return "//maps.tilehosting.com/data/satellite/" + view.zoom + "/" + view.tile.column + "/" + view.tile.row + ".jpg?key=SoGrAH8cEUtj6OnMI1UY";
+        },
+        style: {
+          visibility: "hidden"
+        },
+        attr: '&copy; <a href="https://openmaptiles.com/satellite/" target="_blank">OpenMapTiles</a>'
+      }
+    ]
+  } );
+  
+  // hook into when user clicks one of the basemap buttons
+  $( 'input[name="basemap"]' ).click( function ( e ) {
+    var selectedBasemap = $( 'input[name="basemap"]:checked' );
+
+    // select the clicked label
+    $( 'label' ).removeClass( 'selected' );
+    selectedBasemap.parent( ).addClass( 'selected' );
+    
+    // the value of the checked basemap input matches the class of the
+    // jQuery Geo service we want to show
+    
+    var basemapServiceClass = selectedBasemap.val();
+    
+    // hide all basemap services
+    $( ".basemap" ).geomap( "toggle", false );
+    
+    // show the selected one
+    $( "." + basemapServiceClass ).geomap( "toggle", true );
+  } );
+
+
+  
+
+
+
+
+});
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('require', 'displayfeatures');
+
+
+</script>
+
+</body>
+</html>
+  

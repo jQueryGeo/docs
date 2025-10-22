@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="Draw a trail using multiple services" />
+  <meta charset="utf-8" />
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2025 by ryanttb (http://jsbin.com/zicam/8/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+  <title>Draw a trail using multiple services</title>
+
+<style id="jsbin-css">
+/* example style */
+
+/* template style */
+
+html {
+  font-family: sans-serif;
+  font-size: 100%;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#info {
+  background: #fafafa;
+  border-radius: .5em;
+  box-shadow: .2em .2em .4em #222;
+  font-size: .8em;
+  max-width: 66%;
+  padding: .25em .5em;
+  position: absolute;
+  left: 1em;
+  top: 1em;
+}
+
+</style>
+</head>
+  
+<body>
+
+  <div id="map">
+    <div id="info">
+      Show a trail putting start, end, turns, &amp; lines each on a different service.
+    </div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="../../js/jquery.geo-1.1.0.min.js"></script>
+<script>
+$(function() {
+  // original data, pretending we got it from some other service
+  // lat, lon format (backwards for how jQuery Geo does it)
+  var trailPoints = [
+    [ 42.35822060593307, -71.08239746093747 ],
+    [ 42.333860949071614, -71.21423339843744 ],
+    [ 42.293240546484775, -71.51086425781236 ],
+    [ 42.22005776223478, -71.57678222656234 ],
+    [ 42.20378338874871, -71.79650878906229 ],
+    [ 42.13864396564868, -72.0931396484372 ],
+    [ 42.146790062028124, -72.4776611328121 ],
+    [ 42.13864396564868, -72.66442871093705 ],
+    [ 42.179363966435936, -72.88415527343699 ],
+    [ 42.23632794233799, -72.98303222656197 ],
+    [ 42.24446145979873, -73.09289550781195 ],
+    [ 42.31761593407035, -73.19177246093692 ],
+    [ 42.31761593407035, -73.26867675781189 ],
+    [ 42.382570823363714, -73.52136230468682 ],
+    [ 42.487979336489296, -73.67517089843679 ],
+    [ 42.487979336489296, -73.73010253906178]
+  ];
+  
+  // a LineString for the trail line
+  var trail = {
+    type: 'LineString',
+    coordinates: []
+  };
+
+  $.each( trailPoints, function( i ) {
+    var lat = this[0];
+    var lon = this[1];
+    
+    // remember: in jQuery Geo,
+    // longitude is the first coordinate in an array
+
+    // every point goes into the LineString
+    trail.coordinates.push( [ lon, lat ] );
+  } );
+  
+  // calculate a nice bounding box before we create the map
+  // to avoid requesting tiles we don't need
+  // scaleBy expands the trail's bbox a little to help geomap choose a nicer zoom level
+  var bbox = $.geo.scaleBy( $.geo.bbox( trail ), 1.5 );
+  
+  // create a map
+  var map = $("#map").geomap({
+    bbox: bbox,
+    
+    services: [      
+      {
+        type: "tiled",
+        src: function( view ) {
+          return "//" + String.fromCharCode(97 + (view.index % 3)) + ".tile.openstreetmap.org/" + view.zoom + "/" + view.tile.column + "/" + view.tile.row + ".png";
+        }
+      },
+
+      // a service where we draw red line
+      {
+        id: "lineMark",
+        type: "shingled",
+        src: null
+      },
+
+      // a service where we draw start trail as CSS markers
+      {
+        id: "start_trail",
+        type: "shingled",
+        src: ''
+      },
+
+      // a service where we draw end trail as CSS markers
+      {
+        id: "end_trail",
+        type: "shingled",
+        src: ""
+      }      
+    ],
+    
+    // only applies to interior trail points
+    // because that's all we put on the map widget itself
+    shapeStyle: {
+      color: 'orange',
+      fillOpacity: 1,
+      stroke: 'black'      
+    }
+  });
+  
+  // set shapeStyles & append shapes
+  // note the trailing false on all append calls
+  // except for the last to avoid unnecessary refreshes
+  
+  // set start point shapeStyle & append Point
+  $( '#start_trail' ).geomap( 'append', {
+    type: 'Point',
+    coordinates: trail.coordinates[ 0 ]
+  }, {
+    color: 'green',
+    fillOpacity: 1
+  }, false );
+  
+  // set end point shapeStyle & append Point
+  $( '#end_trail' ).geomap( 'append', {
+    type: 'Point',
+    coordinates: trail.coordinates[ trail.coordinates.length - 1 ]
+  }, {
+    color: 'red',
+    fillOpacity: 1
+  }, false );
+  
+  // set trail line shapeStyle & append LineString
+  $( '#lineMark' ).geomap( 'append', trail, {
+    color: 'orange',
+    strokeWidth: 5
+  }, false );
+  
+  // append all interior points
+  map.geomap( 'append', {
+    type: 'MultiPoint',
+    coordinates: trail.coordinates.slice(1, -1 )
+  } );
+});
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('require', 'displayfeatures');
+
+
+</script>
+
+</body>
+</html>
+  
